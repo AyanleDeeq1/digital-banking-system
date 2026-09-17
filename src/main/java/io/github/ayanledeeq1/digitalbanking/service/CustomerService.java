@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.CustomerRegisterResponseDto;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.RegisterCustomerDto;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.model.Customer;
 import io.github.ayanledeeq1.digitalbanking.model.PasswordCredential;
 import io.github.ayanledeeq1.digitalbanking.repository.CustomerRepository;
@@ -13,10 +15,12 @@ import io.github.ayanledeeq1.digitalbanking.repository.CustomerRepository;
 public class CustomerService {
     private  final CustomerRepository customerRepository;
     private  final PasswordEncoder passwordEncoder;
+    private  final AccountService accountService;
 
-    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AccountService accountService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.accountService = accountService;
     }
 
 
@@ -32,7 +36,16 @@ public class CustomerService {
             passwordCredential // password object
         );
 
+        // Every new customer receives an active account on registration
+        Account newAccount = new Account(
+            accountService.generateAccountNumber(), 
+            AccountStatus.ACTIVE
+        );
+
+        customer.addAccount(newAccount);
+
         Customer savedcustomer = customerRepository.save(customer); //persiste the customer and passowrd credentail
+        accountService.saveAccount(newAccount);
 
         // creeate response dto object
         CustomerRegisterResponseDto responseDto = new CustomerRegisterResponseDto(
