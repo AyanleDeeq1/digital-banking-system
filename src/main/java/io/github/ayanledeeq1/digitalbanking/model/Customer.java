@@ -55,6 +55,10 @@ public class Customer {
     public List<Account> getAccounts() {
     return accounts;
     }
+
+    public  Long getId() {
+        return  id;
+    }
     
     public void  addAccount(Account account) {
         accounts.add(account);
