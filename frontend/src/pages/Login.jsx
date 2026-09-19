@@ -1,11 +1,48 @@
+import { useState } from "react"
+
+
 function Login() {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    async function handleLogin(event) {
+        event.preventDefault()
+
+        const creds = {
+            email,
+            password
+        }
+
+
+        const req = await fetch('http://localhost:8080/api/customers/login', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(creds)
+        })
+        const response = await req.json()
+        console.log(response)
+    }
+
     return (
         <div>
-            <form action="">
+            <form onSubmit={handleLogin}>
                 <label htmlFor="email">Enter your email</label>
-                <input type="email" name="email" id="email" placeholder="janedoe@email.com"/> <br />
+                <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    placeholder="janedoe@email.com" 
+                    onChange={(event) => setEmail(event.target.value)} /> <br />
+
                 <label htmlFor="password">Enter passowrd</label>
-                <input type="password" name="password" id="password" />
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="password" 
+                    onChange={(event) => setPassword(event.target.value)}/>
+                <button type="submit">Login</button>
             </form>
         </div>
     )

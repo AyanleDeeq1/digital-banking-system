@@ -1,15 +1,61 @@
+import { useState } from "react"
+
 function Register() {
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    async function handleSubmit(event) {
+        event.preventDefault()
+
+        const customer = {
+            firstName,
+            lastName,
+            email,
+            password
+        }
+
+        const request = await fetch('http://localhost:8080/api/customers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(customer)
+        })
+        const response = await request.json()
+        console.log(response)
+    }
     return (
         <div>
-            <form action="">
+            <form onSubmit={handleSubmit}>
                 <label htmlFor="firstName">Enter firstname</label>
-                <input type="text" name="firstName" id="firstName" /> <br />
-                 <label htmlFor="lastName">Enter lastname</label>
-                <input type="text" name="lastName"  id="lastName"/> <br />
-                 <label htmlFor="email">Enter Email</label>
-                <input type="email" name="email" id="email"/> <br />
+                <input type="text"
+                 name="firstName"
+                  id="firstName" 
+                  onChange={(event) => setFirstName(event.target.value)}/> <br />
+                  
+                <label htmlFor="lastName">Enter lastname</label>
+                <input 
+                    type="text" 
+                    name="lastName" 
+                    id="lastName"
+                    onChange={(event) => setLastName(event.target.value)}/> <br />
+
+                
+                <label htmlFor="email">Enter Email</label>
+                <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    onChange={(event) => setEmail(event.target.value)} /> <br />
+
                 <label htmlFor="password">Enter password</label>
-                <input type="password" name="password" id="password" />
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="password" onChange={(event) => setPassword(event.target.value)} />
+                <button type="submit">Register</button>
             </form>
         </div>
     )
