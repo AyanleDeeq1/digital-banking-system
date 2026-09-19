@@ -1,5 +1,8 @@
 package io.github.ayanledeeq1.digitalbanking.config;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,25 +12,54 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration 
+@Configuration
 public class SecurityConfig {
+
+    @Value("${app.cors.allowed-origin}")
+    private  String allowedOrigin;
 
     @Bean 
     public  PasswordEncoder passwordEncoder() {
         return  new BCryptPasswordEncoder();
     }
 
+    @Bean 
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        System.out.println(allowedOrigin);
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(
+            List.of(allowedOrigin)
+        );
+
+        configuration.setAllowedMethods(
+              List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+        );
+
+        configuration.setAllowedHeaders(
+             List.of("Authorization", "Content-Type")
+        );
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/api/**", configuration);
+        return  source;
+    }
 
     @Bean
-    public  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public  SecurityFilterChain securityFilterChain(HttpSecurity http, UrlBasedCorsConfigurationSource configurationSource) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())
             .securityMatcher("/api/**")
-                .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST,  "/api/customers", "/api/customers/login").permitAll()
-                .anyRequest().authenticated()
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors
+                            .configurationSource(configurationSource))
+            .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.POST,  "/api/customers", "/api/customers/login").permitAll()
+            .anyRequest().authenticated()
             );
         
         return http.build();
