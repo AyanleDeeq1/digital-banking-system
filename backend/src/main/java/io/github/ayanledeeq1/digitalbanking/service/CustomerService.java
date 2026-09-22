@@ -2,6 +2,7 @@ package io.github.ayanledeeq1.digitalbanking.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.CustomerRegisterResponseDto;
 
@@ -26,14 +27,15 @@ public class CustomerService {
     }
 
 
-    public  Customer getCosutmerById(Long id) {
+    public  Customer getCustomerById(Long id) {
         return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Coustmer with id " + id + " could not found"));
     }
 
-      public  Customer getCosutmerByEmail(String email) {
+      public  Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email).orElseThrow(() -> new CustomerNotFoundException("Coustmer with email " + email + " could not found"));
     }
 
+    @Transactional 
     public CustomerRegisterResponseDto saveCustomer(RegisterCustomerDto requestdDto) {
         // hash password
         String hashedPassword = passwordEncoder.encode(requestdDto.getPassword());

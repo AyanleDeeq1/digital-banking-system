@@ -26,7 +26,7 @@ public class CustomerRegisterResponseDto {
         return  lastName;
     }
 
-    public  String gerEmail() {
+    public  String getEmail() {
         return  email;
     }
     
