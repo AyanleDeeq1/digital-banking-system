@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.LoginRespnseDto;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.LogineRequestDto;
 import io.github.ayanledeeq1.digitalbanking.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController 
@@ -21,9 +23,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public  ResponseEntity<LoginRespnseDto> login(@Valid @RequestBody LogineRequestDto requestDto) {
+    public  ResponseEntity<LoginRespnseDto> login(@Valid @RequestBody LogineRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
         System.out.println("Hit  the Controller");
-        LoginRespnseDto respnseDto = authService.login(requestDto);
+        LoginRespnseDto respnseDto = authService.login(requestDto, request, response);
 
         return  ResponseEntity.ok()
                    .body(respnseDto);
