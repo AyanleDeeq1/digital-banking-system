@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function Register() {
+function Register({ csrfToken}) {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
@@ -19,8 +19,10 @@ function Register() {
         const request = await fetch('http://localhost:8080/api/customers', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken
             },
+            credentials: "include",
             body: JSON.stringify(customer)
         })
         const response = await request.json()

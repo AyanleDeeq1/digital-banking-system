@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 
-function Login() {
+function Login({csrfToken}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -16,8 +16,10 @@ function Login() {
 
         const req = await fetch('http://localhost:8080/api/customers/login', {
             method: 'POST',
+            credentials: 'include',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(creds)
         })
