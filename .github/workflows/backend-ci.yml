@@ -1,0 +1,40 @@
+name: Backend CI
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up java 21
+              uses: actions/setup-java@v4
+              with:
+                java-version: '21'
+                distribution: 'temurin'
+            - name: run backend tests
+              working-directory: backend
+              env:
+                TEST_DB_URL: jdbc:mysql://localhost:3306/digital_banking_test
+                TEST_DB_USER: testuser
+                TEST_DB_PASSWORD: testpassword
+              run: ./mvnw test
+        services:
+             mysql:
+                image: mysql:8.4
+                env:
+                    MYSQL_DATABASE: digital_banking_test
+                    MYSQL_USER: testuser
+                    MYSQL_PASSWORD: testpassword
+                    MYSQL_ROOT_PASSWORD: rootpassword
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -h localhost"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
