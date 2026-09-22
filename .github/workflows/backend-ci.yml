@@ -22,6 +22,7 @@ jobs:
                 TEST_DB_URL: jdbc:mysql://localhost:3306/digital_banking_test
                 TEST_DB_USER: testuser
                 TEST_DB_PASSWORD: testpassword
+                CORS_ALLOWED_ORIGIN: http://localhost:5173
               run: ./mvnw test
         services:
              mysql:
