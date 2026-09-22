@@ -1,0 +1,14 @@
+spring:
+  config:
+    import: "optional:file:./secrets.yaml"
+  datasource: 
+    url: ${TEST_DB_URL}
+    username: ${TEST_DB_USER}
+    password: ${TEST_DB_PASSWORD}
+  
+  
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  
