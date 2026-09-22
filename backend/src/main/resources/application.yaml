@@ -1,6 +1,6 @@
 spring:
   config:
-    import: "file:./secrets.yaml"
+    import: "optional:file:./secrets.yaml"
   application:
     name: digital-banking-system
   datasource: 
