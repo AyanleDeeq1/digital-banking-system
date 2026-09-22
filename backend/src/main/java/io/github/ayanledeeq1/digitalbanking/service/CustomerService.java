@@ -8,6 +8,7 @@ import io.github.ayanledeeq1.digitalbanking.dto.customerdto.CustomerRegisterResp
 
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.RegisterCustomerDto;
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountType;
 import io.github.ayanledeeq1.digitalbanking.exception.CustomerNotFoundException;
 import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.model.Customer;
@@ -49,10 +50,7 @@ public class CustomerService {
         );
 
         // Every new customer receives an active account on registration
-        Account newAccount = new Account(
-            accountService.generateAccountNumber(), 
-            AccountStatus.ACTIVE
-        );
+        Account newAccount = new Account("Main Account", accountService.generateAccountNumber(), AccountType.CHECKING, AccountStatus.ACTIVE);
 
         customer.addAccount(newAccount);
 

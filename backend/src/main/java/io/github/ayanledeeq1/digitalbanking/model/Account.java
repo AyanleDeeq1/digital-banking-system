@@ -1,6 +1,7 @@
 package io.github.ayanledeeq1.digitalbanking.model;
 
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,8 +18,13 @@ public class Account {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
+    @Column(nullable = false)
+    private  String name;
     @Column(nullable = false, unique = true)
     private String accountNumber;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccountType accountType;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountStatus status;
@@ -28,9 +34,12 @@ public class Account {
 
     protected Account() {}
 
-    public Account(String accountNumber, AccountStatus status) {
+    public Account(String name, String accountNumber, AccountType accountType, AccountStatus status) {
+        this.name = name;
         this.accountNumber = accountNumber;
+        this.accountType = accountType;
         this.status= status;
+
     }
 
 
@@ -40,6 +49,14 @@ public class Account {
 
     public AccountStatus getStatus() {
         return  status;
+    }
+
+    public  AccountType getType() {
+        return  accountType;
+    }
+
+    public  String getAccountName() {
+        return  name;
     }
 
     void  setCustomer(Customer customer) {

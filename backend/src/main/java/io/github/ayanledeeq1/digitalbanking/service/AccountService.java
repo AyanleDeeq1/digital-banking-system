@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountType;
 import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.repository.AccountRespository;
 
@@ -21,8 +22,8 @@ public class AccountService {
         return  accountRespository.save(account);
     }
 
-    public Account createAccount(String accountNumber, AccountStatus status) {
-        return  new Account(accountNumber, status);
+    public Account createAccount(String name, String accountNumber, AccountType accountType, AccountStatus status) {
+        return  new Account(accountNumber, accountNumber, accountType, status);
     }
 
 

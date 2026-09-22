@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountType;
 import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.repository.AccountRespository;
 import io.github.ayanledeeq1.digitalbanking.service.AccountService;
@@ -35,8 +36,9 @@ public class AccountServiceTest {
     @Test
     void  createAccount() {
         String acountNumber = "122sfef989";
+        String name = "Main Account";
 
-        Account account = accountService.createAccount(acountNumber, AccountStatus.ACTIVE);
+        Account account = accountService.createAccount(name, acountNumber, AccountType.CHECKING, AccountStatus.ACTIVE);
 
         assertEquals("122sfef989", account.getAccountNumber());
         assertEquals(AccountStatus.ACTIVE, account.getStatus());
@@ -46,8 +48,9 @@ public class AccountServiceTest {
     @Test 
     void  saveAccountTest() {
         String acountNumber = "122sfef989";
+        String name = "Main Account";
 
-        Account account = accountService.createAccount(acountNumber, AccountStatus.CLOSED);
+        Account account = accountService.createAccount(name, acountNumber, AccountType.CHECKING, AccountStatus.CLOSED);
 
         when(accountRespository.save(account)).thenReturn(account);
         Account savedAccount = accountService.saveAccount(account);
