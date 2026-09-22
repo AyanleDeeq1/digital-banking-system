@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
 @SpringBootTest
@@ -35,6 +36,7 @@ public class customerIntegrationTest {
     @Test 
     void  saveCustomerIntegrationTest() throws Exception{
         mockMvc.perform(post("/api/customers")
+                  .with(csrf())
                  .contentType(MediaType.APPLICATION_JSON)
                  .content("""
                             {
@@ -57,6 +59,5 @@ public class customerIntegrationTest {
         assertEquals("aye", customer.getFirstName());
         assertEquals(1,  customer.getAccounts().size());
         assertEquals(AccountStatus.ACTIVE, account.getStatus());
-
     }
 }

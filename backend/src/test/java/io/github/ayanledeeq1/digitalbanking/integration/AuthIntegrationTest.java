@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.mock.web.MockHttpSession;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -35,6 +36,7 @@ public class AuthIntegrationTest {
     @BeforeEach 
     void  setUp() throws Exception {
         mockMvc.perform(post("/api/customers")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                     {
@@ -52,6 +54,7 @@ public class AuthIntegrationTest {
     @Test 
     void logintTest() throws Exception{
         MvcResult result = mockMvc.perform((post("/api/customers/login"))
+                      .with(csrf())
                       .contentType(MediaType.APPLICATION_JSON)
                       .content("""
                                 {
