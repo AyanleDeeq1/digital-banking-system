@@ -9,7 +9,7 @@ function Dashboard({customer}) {
         <>
         <Header page="dashboard" customer={customer}/>
         <main>
-            <h1>welcome {cus
+            <h1>welcome </h1>
         </main>
         <Footer/>
         </>
