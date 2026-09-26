@@ -1,11 +1,20 @@
-function Home() {
+import { Link } from "react-router-dom";
+import Header from '../components/Header.jsx'
+import Footer from '../components/Footer.jsx'
+
+function Home({customer}) {
   return (
-    <div>
-      <h1>UrBank</h1>
-      <h2>Wlocome to you bank site</h2>
-      <button><a href="/login">longin</a></button>
-      <button><a href="/register">Register</a></button>
-    </div>
+    <>
+      <Header page="home" customer={customer}/>
+      <main>
+           <h1>Welcome to URBank</h1>
+
+           <p>
+              Save, secure, and easily handle your money with ease.
+            </p>
+      </main>
+      <Footer/>
+    </>
   )
 }
 

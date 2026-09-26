@@ -1,6 +1,8 @@
 import { useState } from "react"
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx'
 
-function Register({ csrfToken}) {
+function Register({ csrfToken, customer}) {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
@@ -29,37 +31,41 @@ function Register({ csrfToken}) {
         console.log(response)
     }
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="firstName">Enter firstname</label>
-                <input type="text"
-                 name="firstName"
-                  id="firstName" 
-                  onChange={(event) => setFirstName(event.target.value)}/> <br />
-                  
-                <label htmlFor="lastName">Enter lastname</label>
-                <input 
-                    type="text" 
-                    name="lastName" 
-                    id="lastName"
-                    onChange={(event) => setLastName(event.target.value)}/> <br />
+        <>
+              <Header page="register" customer={customer}/>
+            <main>
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="firstName">Enter firstname</label>
+                    <input type="text"
+                    name="firstName"
+                    id="firstName" 
+                    onChange={(event) => setFirstName(event.target.value)}/> <br />
+                    
+                    <label htmlFor="lastName">Enter lastname</label>
+                    <input 
+                        type="text" 
+                        name="lastName" 
+                        id="lastName"
+                        onChange={(event) => setLastName(event.target.value)}/> <br />
 
-                
-                <label htmlFor="email">Enter Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    onChange={(event) => setEmail(event.target.value)} /> <br />
+                    
+                    <label htmlFor="email">Enter Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        onChange={(event) => setEmail(event.target.value)} /> <br />
 
-                <label htmlFor="password">Enter password</label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    id="password" onChange={(event) => setPassword(event.target.value)} />
-                <button type="submit">Register</button>
-            </form>
-        </div>
+                    <label htmlFor="password">Enter password</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" onChange={(event) => setPassword(event.target.value)} />
+                    <button type="submit">Register</button>
+                </form>
+            </main>
+            <Footer/>
+        </>
     )
 }
 export default Register
