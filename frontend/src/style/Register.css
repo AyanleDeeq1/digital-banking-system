@@ -1,0 +1,136 @@
+.register-page {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.register-main {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 60px 8%;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(37, 139, 255, 0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #f8fbff 0%,
+            #eef5ff 100%
+        );
+}
+
+.register-card {
+    width: 100%;
+    max-width: 620px;
+
+    padding: 48px 52px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+
+    box-shadow:
+        0 25px 60px rgba(16, 60, 110, 0.14),
+        0 4px 12px rgba(16, 60, 110, 0.06);
+}
+
+.register-heading {
+    margin-bottom: 32px;
+}
+
+.register-eyebrow {
+    margin: 0 0 12px;
+
+    color: #1677e8;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.register-heading h1 {
+    margin: 0;
+
+    color: #0b2347;
+    font-size: 36px;
+    font-weight: 750;
+    letter-spacing: -1px;
+}
+
+.register-subtitle {
+    margin: 12px 0 0;
+
+    color: #66768c;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.register-name-row {
+    display: flex;
+    gap: 18px;
+}
+
+.register-name-row .form-group {
+    flex: 1;
+}
+
+.register-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.register-card .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.register-card .form-group label {
+    color: #263a55;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.register-card .form-group input {
+    width: 100%;
+    height: 54px;
+
+    padding: 0 16px;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    color: #1f2937;
+    background-color: #f8fbff;
+
+    border: 1px solid #d5dfeb;
+    border-radius: 12px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.register-card .form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.register-card .form-group input:focus {
+    background-color: white;
+    border-color: #1684f8;
+
+    box-shadow: 0 0 0 4px rgba(22, 132, 248, 0.12);
+}
+

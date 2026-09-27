@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from '../assets/logo.png'
 import '../style/Header.css'
+import Button from "./Button.jsx";
 
 function Header({customer, page}) {
   
@@ -36,19 +37,26 @@ function Header({customer, page}) {
                         <Link to="/register">Register</Link>
                         </>
                     }
-
                     {customer && (
                         <>
-                        {page !== "home" && 
-                                <Link to="/">Home</Link>
-                            }
-                        {page !== "dashboard" && 
-                            <Link to="/dashboard">Dashboard</Link>
-                        }
-                        {page !== "profile" && 
-                            <Link to="/profile">Profile</Link>
-                        }
-                        <button>Logout</button>
+                            {page === "dashboard" && (
+                                <div className="customer-avatar">
+                                    {customer.firstName.charAt(0).toUpperCase()}
+                                    {customer.lastName.charAt(0).toUpperCase()}
+                                </div>
+                            )}
+
+                            {page === "home" && (
+                                <>
+                                    <Link to="/dashboard">Dashboard</Link>
+                                    <Link to="/profile">Profile</Link>
+                                    <Link to="/accounts">Accounts</Link>
+                                     <Button variant="logout">
+                                             Logout
+                                     </Button>
+                                     
+                                </>
+                            )}
                         </>
                     )}
             </nav>

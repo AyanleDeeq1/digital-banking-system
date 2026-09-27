@@ -1,0 +1,65 @@
+.button {
+    border: none;
+    border-radius: 12px;
+
+    font-family: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.button-primary {
+    width: 100%;
+    height: 56px;
+
+    background: linear-gradient(
+        135deg,
+        #0757b8,
+        #168cff
+    );
+
+    color: white;
+
+    font-size: 17px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(22, 119, 232, 0.28);
+}
+
+.button-action {
+    padding: 12px 18px;
+
+    background-color: #1677e8;
+    color: white;
+
+    font-size: 14px;
+}
+
+.button-action:hover {
+    background-color: #0f68cf;
+}
+
+
+.button-logout {
+    width: 100%;
+    padding: 14px 16px;
+
+    border: 1px solid #f1caca;
+
+    background-color: #fff5f5;
+    color: #c43d3d;
+
+    font-size: 15px;
+    text-align: left;
+}
+
+.button-logout:hover {
+    background-color: #ffe8e8;
+    border-color: #e5aaaa;
+}

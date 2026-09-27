@@ -1,0 +1,137 @@
+.sidebar {
+    width: 230px;
+    flex-shrink: 0;
+
+    padding: 32px 20px;
+
+    background-color: #f8fbff;
+    border-right: 1px solid #dfe7f1;
+
+    box-shadow: 4px 0 18px rgba(16, 60, 110, 0.04);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.sidebar-nav a {
+    padding: 14px 16px;
+
+    color: #52637a;
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    border-radius: 10px;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    color: #1677e8;
+    background-color: #eaf4ff;
+
+    transform: translateX(3px);
+}
+
+.sidebar-nav a.active {
+    color: #1677e8;
+    background-color: #eaf4ff;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding-top: 20px;
+    border-top: 1px solid #dfe7f1;
+}
+
+.sidebar {
+    width: 230px;
+    flex-shrink: 0;
+
+    padding: 32px 20px;
+
+    background-color: #f8fbff;
+    border-right: 1px solid #dfe7f1;
+
+    box-shadow: 4px 0 18px rgba(16, 60, 110, 0.04);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.sidebar-nav a {
+    padding: 14px 16px;
+
+    color: #52637a;
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    border-radius: 10px;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    color: #1677e8;
+    background-color: #eaf4ff;
+
+    transform: translateX(3px);
+}
+
+.sidebar-nav a.active {
+    color: #1677e8;
+    background-color: #eaf4ff;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding-top: 20px;
+    border-top: 1px solid #dfe7f1;
+}
+.sidebar-logout {
+    width: 100%;
+    padding: 14px 16px;
+
+    border: 1px solid #f1caca;
+    border-radius: 10px;
+
+    background-color: #fff5f5;
+    color: #c43d3d;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.sidebar-logout:hover {
+    background-color: #ffe8e8;
+    border-color: #e5aaaa;
+}
