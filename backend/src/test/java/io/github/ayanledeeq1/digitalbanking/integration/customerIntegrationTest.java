@@ -11,11 +11,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
 import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.model.Customer;
+import io.github.ayanledeeq1.digitalbanking.repository.AccountRespository;
 import io.github.ayanledeeq1.digitalbanking.repository.CustomerRepository;
 import io.github.ayanledeeq1.digitalbanking.service.CustomerService;
 import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +34,8 @@ public class customerIntegrationTest {
     MockMvc mockMvc;
     @Autowired 
     CustomerRepository customerRepository;
+    @Autowired
+    AccountRespository accountRespository;
 
     @Test 
     void  saveCustomerIntegrationTest() throws Exception{
@@ -59,5 +63,8 @@ public class customerIntegrationTest {
         assertEquals("aye", customer.getFirstName());
         assertEquals(1,  customer.getAccounts().size());
         assertEquals(AccountStatus.ACTIVE, account.getStatus());
+        Account foundAccount = accountRespository.findAccountByNumber(account.getAccountNumber()).orElseThrow();
+        assertEquals(account.getId(), foundAccount.getId());
+        assertTrue(accountRespository.findAccountByNumber("missing-account-number").isEmpty());
     }
 }

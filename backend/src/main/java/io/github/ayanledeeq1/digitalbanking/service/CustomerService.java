@@ -1,9 +1,14 @@
 package io.github.ayanledeeq1.digitalbanking.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.ayanledeeq1.digitalbanking.dto.accountDto.AccountCreateDto;
+import io.github.ayanledeeq1.digitalbanking.dto.accountDto.AccountResponseDto;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.CustomerRegisterResponseDto;
 
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.RegisterCustomerDto;
@@ -66,6 +71,44 @@ public class CustomerService {
             );
 
         return  responseDto;
+    }
+
+    public List<AccountResponseDto> getCustomerAccounts(String email) {
+        Customer customer = getCustomerByEmail(email);
+
+        List<Account> accounts = customer.getAccounts();
+        
+        List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
+        for (Account account : accounts) {
+            AccountResponseDto responseDto = new  AccountResponseDto(account.getId(), account.getAccountName(), account.getAccountNumber(), account.getType(), account.getStatus());
+            accountResponseDtoList.add(responseDto);
+        }
+        return  accountResponseDtoList;
+    }
+
+    @Transactional 
+    public  AccountResponseDto  createAnotherAccount(AccountCreateDto createDto, String email) {
+        Customer customer = getCustomerByEmail(email);
+        String accountNumber = accountService.generateAccountNumber();
+
+
+       while (accountService.accountNumberExist(accountNumber)) {
+        accountNumber = accountService.generateAccountNumber();
+       }
+
+        Account account = accountService.createAccount(createDto.getName(), accountNumber, createDto.getAccountType(), AccountStatus.ACTIVE);
+        customer.addAccount(account);
+        Account createdAccount = accountService.saveAccount(account);
+
+        AccountResponseDto responseDto = new AccountResponseDto(
+            createdAccount.getId(), 
+            createdAccount.getAccountName(),
+            createdAccount.getAccountNumber(), 
+            createdAccount.getType(),
+            createdAccount.getStatus()
+        );
+        return  responseDto;
+
     }
     
 }

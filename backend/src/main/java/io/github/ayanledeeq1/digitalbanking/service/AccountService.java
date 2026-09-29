@@ -23,17 +23,23 @@ public class AccountService {
     }
 
     public Account createAccount(String name, String accountNumber, AccountType accountType, AccountStatus status) {
-        return  new Account(accountNumber, accountNumber, accountType, status);
+        return  new Account(name, accountNumber, accountType, status);
     }
+
+    public boolean accountNumberExist(String accountNumber) {
+        return  accountRespository.findAccountByNumber(accountNumber).isPresent();
+    } 
 
 
     public String generateAccountNumber() {
-        String accountNumber = "";
+        String clearingNumber = "3424-5,";
+        String generatedSequence = "";
+
         for (int i = 0; i < 10; i++) {
-            int diggit = random.nextInt(10);
-            accountNumber += diggit;
+            int digit = random.nextInt(10);
+            generatedSequence += digit;
         }
-        return  accountNumber;  
+        return  clearingNumber + generatedSequence;
     }
     
 }
