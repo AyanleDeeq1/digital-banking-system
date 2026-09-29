@@ -1,9 +1,23 @@
+# Digital Banking System — API
+
+The backend exposes a REST API used by the frontend.
+
+The application uses session-based authentication with Spring Security.
+After successful authentication, the server maintains the authenticated
+session using a `JSESSIONID` cookie.
+
+State-changing requests are protected using CSRF.
+
+---
+
 ## Customers
 
 ### Register Customer
 
-Registers a new customer. A first bank account is created automatically
-when the customer is registered.
+Registers a new customer.
+
+When registration is completed, the customer's first bank account is
+created automatically.
 
 #### Request
 
@@ -35,15 +49,41 @@ when the customer is registered.
 
 ---
 
-### Login Customer
+### Get Current Customer
 
-Authenticates an existing customer using their email and password.
+Returns the currently authenticated customer.
 
-The login flow uses CSRF protection and session-based authentication.
+The customer is identified from the authenticated session. The client
+does not need to send a customer ID.
 
-#### Get CSRF Token
+#### Request
 
-Before sending the login request, the client retrieves a CSRF token.
+`GET /api/customers/me`
+
+The request must include the authenticated session cookie.
+
+#### Success Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com"
+}
+```
+
+---
+
+## Authentication
+
+### Get CSRF Token
+
+Retrieves the CSRF token used for state-changing requests.
+
+#### Request
 
 `GET /api/customers/csrf`
 
@@ -59,10 +99,22 @@ Before sending the login request, the client retrieves a CSRF token.
 }
 ```
 
-The returned token is sent in the `X-XSRF-TOKEN` header when making the
-login request.
+The returned token is sent using the `X-XSRF-TOKEN` header when making
+requests that require CSRF protection.
 
-#### Login Request
+---
+
+### Login Customer
+
+Authenticates an existing customer using their email and password.
+
+The login flow uses CSRF protection and session-based authentication.
+
+Before sending the login request, the client retrieves a CSRF token from:
+
+`GET /api/customers/csrf`
+
+#### Request
 
 `POST /api/customers/login`
 
@@ -93,8 +145,8 @@ login request.
 After successful authentication, the server creates an authenticated
 session and sends a `JSESSIONID` cookie to the client.
 
-The client includes the session cookie in subsequent requests that
-require authentication.
+The client includes this session cookie in subsequent authenticated
+requests.
 
 #### Login Flow
 
@@ -124,3 +176,109 @@ Client
   v
 Authenticated requests
 ```
+
+---
+
+## Accounts
+
+### Get Customer Accounts
+
+Returns all bank accounts belonging to the currently authenticated
+customer.
+
+The customer is identified from the authenticated session. The client
+does not send a customer ID.
+
+#### Request
+
+`GET /api/customers/accounts`
+
+The request must include the authenticated session cookie.
+
+#### Success Response
+
+**Status:** `200 OK`
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Main Account",
+    "accountNumber": "3424-5,8392014756",
+    "type": "CHECKING",
+    "status": "ACTIVE"
+  }
+]
+```
+
+If the customer has multiple accounts, each account is returned in the
+response array.
+
+---
+
+### Create Account
+
+Creates an additional bank account for the currently authenticated
+customer.
+
+The customer is identified from the authenticated session. The client
+does not send a customer ID.
+
+The backend generates the account number and creates the account with
+`ACTIVE` status.
+
+#### Request
+
+`POST /api/customers/createAccount`
+
+**Content-Type:** `application/json`
+
+**X-XSRF-TOKEN:** `<csrf-token>`
+
+```json
+{
+  "name": "Savings Account",
+  "accountType": "SAVINGS"
+}
+```
+
+Supported account types are:
+
+- `CHECKING`
+- `SAVINGS`
+
+#### Success Response
+
+**Status:** `201 Created`
+
+```json
+{
+  "id": 2,
+  "name": "Savings Account",
+  "accountNumber": "3424-5,1059382741",
+  "type": "SAVINGS",
+  "status": "ACTIVE"
+}
+```
+
+---
+
+## Current API Summary
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/customers` | Register a customer |
+| `GET` | `/api/customers/csrf` | Retrieve a CSRF token |
+| `POST` | `/api/customers/login` | Authenticate a customer |
+| `GET` | `/api/customers/me` | Get the authenticated customer |
+| `GET` | `/api/customers/accounts` | Get the authenticated customer's accounts |
+| `POST` | `/api/customers/createAccount` | Create an additional account |
+
+---
+
+## Transactions
+
+Transaction, ledger, and account balance functionality is currently
+being designed.
+
+Transaction endpoints have not yet been defined.
