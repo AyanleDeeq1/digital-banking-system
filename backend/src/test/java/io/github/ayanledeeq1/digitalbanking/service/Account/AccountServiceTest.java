@@ -30,7 +30,7 @@ public class AccountServiceTest {
     void gernerateAccountnumberTest() {
         String accountNumber = accountService.generateAccountNumber();
 
-        assertTrue(accountNumber.matches("\\d{10}"));
+        assertTrue(accountNumber.matches("3424-5,\\d{10}"));
     }
 
     @Test
