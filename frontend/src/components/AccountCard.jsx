@@ -2,11 +2,11 @@ import "../style/AccountCard.css";
 
 function AccountCard({ account }) {
     return (
-        <div className={`account-card ${account.accountType.toLowerCase()}`}>
+        <div className={`account-card ${account.type.toLowerCase()}`}>
 
             <div className="account-card-header">
                 <h3>{account.name}</h3>
-                <span>{account.accountType}</span>
+                <span>{account.type}</span>
             </div>
 
             <div className="account-card-number">

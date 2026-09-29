@@ -4,6 +4,8 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import { useEffect, useState } from 'react'
+import CreateAccount from './pages/CreateAccount.jsx'
+import Accounts from "./pages/Accounts.jsx";
 
 function App() {
 
@@ -45,6 +47,8 @@ function App() {
       <Route path='/login' element={<Login csrfToken={csrfToken} customer={customer} setCustomer={setCustomer}/>} />
       <Route path='/register' element={<Register csrfToken={csrfToken} customer={customer} />} />
       <Route path='/dashboard' element={<Dashboard customer={customer} />} />
+      <Route path='/createAccount' element={<CreateAccount csrfToken={csrfToken} customer={customer} />} />
+      <Route path='/accounts' element={<Accounts customer={customer} />} />
     </Routes>
   )
 }

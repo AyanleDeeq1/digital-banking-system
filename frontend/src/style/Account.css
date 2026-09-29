@@ -1,0 +1,230 @@
+.accounts-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.accounts-body {
+    flex: 1;
+    display: flex;
+}
+
+.accounts-main {
+    flex: 1;
+    padding: 48px 56px;
+}
+
+
+/* PAGE HEADING */
+
+.accounts-page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    padding: 28px 32px;
+    margin-bottom: 36px;
+
+    background: linear-gradient(135deg, #ffffff, #eef6ff);
+    border: 1px solid #dbeafe;
+    border-radius: 18px;
+
+    box-shadow: 0 8px 24px rgba(16, 60, 110, 0.05);
+}
+
+.accounts-page-heading h1 {
+    margin: 0;
+
+    color: #0b2347;
+    font-size: 32px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+.accounts-page-heading > div > p:last-child {
+    margin: 10px 0 0;
+
+    color: #66768c;
+    font-size: 15px;
+}
+
+
+/* SMALL BLUE LABEL */
+
+.section-eyebrow {
+    margin: 0 0 8px;
+
+    color: #1677e8;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+
+/* ACCOUNT CARDS */
+
+.accounts-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 460px));
+
+    gap: 24px;
+    align-items: stretch;
+}
+
+
+/* SMALLER SCREENS */
+
+@media (max-width: 1000px) {
+    .accounts-list {
+        grid-template-columns: 1fr;
+    }
+
+    .accounts-page-heading {
+        align-items: flex-start;
+        gap: 24px;
+    }
+}
+
+.accounts-table-container {
+    width: 100%;
+    overflow: hidden;
+
+    background-color: white;
+    border: 1px solid #e3eaf3;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 24px rgba(16, 60, 110, 0.05);
+}
+
+.accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+/* HEADER */
+
+.accounts-table thead {
+    background-color: #f8fafc;
+}
+
+.accounts-table th {
+    padding: 16px 20px;
+
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    text-align: left;
+    text-transform: uppercase;
+
+    border-bottom: 1px solid #e3eaf3;
+}
+
+
+/* ROWS */
+
+.accounts-table td {
+    padding: 20px;
+
+    color: #475569;
+    font-size: 14px;
+
+    border-bottom: 1px solid #edf1f5;
+}
+
+.accounts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.accounts-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.accounts-table tbody tr:hover {
+    background-color: #f8fbff;
+}
+
+
+/* ACCOUNT NAME */
+
+.accounts-table .account-name {
+    color: #0b2347;
+    font-weight: 700;
+}
+
+
+/* TYPE */
+
+.account-type {
+    padding: 6px 10px;
+
+    background-color: #eef6ff;
+    color: #1677e8;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* NUMBER */
+
+.accounts-table .account-number {
+    color: #334155;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+
+/* STATUS */
+
+.table-status {
+    display: inline-block;
+
+    padding: 6px 10px;
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.table-status.active {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.table-status.frozen {
+    background-color: #cffafe;
+    color: #0e7490;
+}
+
+.table-status.closed {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* ACTION */
+
+.account-action {
+    text-align: right;
+}
+
+.account-action button {
+    border: none;
+    background: none;
+
+    color: #1677e8;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.account-action button:hover {
+    text-decoration: underline;
+}
