@@ -28,8 +28,8 @@ function Home({customer}) {
                 </section>
 
                 <BankCard
-                    firstName="Ayanle"
-                    lastName="Deeq"
+                    firstName="John"
+                    lastName="Doe"
                     lastFour="1234"
                     validDate="02/30"
                     cvc2="123"
