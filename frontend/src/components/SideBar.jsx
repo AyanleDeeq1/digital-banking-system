@@ -22,6 +22,10 @@ function SideBar() {
                     Profile
                 </NavLink>
 
+                <NavLink to="/my-card">
+                    My Card
+                </NavLink>
+
             </nav>
               <div className="sidebar-bottom">
                 <button className="sidebar-logout">

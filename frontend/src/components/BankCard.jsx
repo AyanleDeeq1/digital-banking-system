@@ -1,6 +1,6 @@
 import logo from "../assets/logo.png";
 import "../style/BankCard.css";
-function BankCard({firstName, lastName, lastFour,validDate, cvc2, type}) {
+function BankCard({firstName, lastName, cardHolderName, cardNumber, lastFour,validDate, cvc2, type}) {
     return (
         <div className="bank-card">
             <div className="card-header">
@@ -9,14 +9,14 @@ function BankCard({firstName, lastName, lastFour,validDate, cvc2, type}) {
             </div>
             <div className="card-number-row">
                 <div className="card-number">
-                    **** &nbsp; **** &nbsp; **** &nbsp; {lastFour}
+                    {cardNumber ? cardNumber.match(/.{1,4}/g).join(" ") : <>**** &nbsp; **** &nbsp; **** &nbsp; {lastFour}</>}
                 </div>
                 <div className="card-chip"></div>
             </div>
             <div className="card-details">
                 <div>
                     <span>Card Holder</span>
-                    <p>{firstName} {lastName}</p>
+                    <p>{cardHolderName ?? `${firstName} ${lastName}`}</p>
                 </div>
                 <div>
                     <span>valid thru</span>

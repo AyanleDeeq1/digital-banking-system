@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.jsx'
 import { useEffect, useState } from 'react'
 import CreateAccount from './pages/CreateAccount.jsx'
 import Accounts from "./pages/Accounts.jsx";
+import MyCard from "./pages/MyCard.jsx";
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
       <Route path='/dashboard' element={<Dashboard customer={customer} />} />
       <Route path='/createAccount' element={<CreateAccount csrfToken={csrfToken} customer={customer} />} />
       <Route path='/accounts' element={<Accounts customer={customer} />} />
+      <Route path='/my-card' element={<MyCard customer={customer} />} />
     </Routes>
   )
 }

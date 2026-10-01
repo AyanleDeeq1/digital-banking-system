@@ -1,0 +1,24 @@
+.my-card-page { min-height: 100vh; display: flex; flex-direction: column; }
+.my-card-body { flex: 1; display: flex; }
+.my-card-main { flex: 1; min-width: 0; padding: 48px 56px; background: radial-gradient(ellipse at 50% 45%, #e8f1ff, #f6f8fb 70%); }
+.my-card-heading { text-align: center; margin: 16px auto 36px; }
+.my-card-eyebrow { color: #3669a6; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+.my-card-heading h1 { margin: 12px 0; font-size: 36px; letter-spacing: -1px; }
+.my-card-heading p { color: #66768c; }
+.my-card-stage { min-height: 370px; padding: 36px 24px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; max-width: 820px; margin: auto; border: 1px solid #fff; border-radius: 32px; background: radial-gradient(ellipse at center, #d5e6ff, #eef5ff 65%, #ffffffb3); box-shadow: 0 12px 40px #173e7010; }
+.my-card-caption { text-align: center; font-size: 13px; margin-top: 24px; }
+.my-card-stage .bank-card { width: 480px; height: 280px; }
+.my-card-stage .card-number { font-size: clamp(16px, 2vw, 23px); letter-spacing: 1px; white-space: pre; font-variant-numeric: tabular-nums; }
+.my-card-stage .card-chip { flex-shrink: 0; margin-left: 12px; }
+.my-card-main h1 { color: #0b2347; }
+.my-card-main > p { color: #66768c; margin-bottom: 32px; }
+.my-card-main .bank-card { max-width: 100%; box-sizing: border-box; }
+.my-card-main .card-details > div { min-width: 0; }
+.my-card-main .card-details > div:first-child { max-width: 50%; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+    .my-card-main { padding: 24px 16px; }
+    .my-card-stage { min-height: 300px; padding: 24px 12px; border-radius: 24px; }
+    .my-card-stage .bank-card { padding: 20px; height: 250px; }
+    .my-card-stage .card-chip { width: 32px; height: 26px; }
+    .my-card-main .card-number { font-size: 16px; letter-spacing: 1px; }
+}
