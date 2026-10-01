@@ -87,7 +87,7 @@
 
 .accounts-table-container {
     width: 100%;
-    overflow: hidden;
+    overflow-x: auto;
 
     background-color: white;
     border: 1px solid #e3eaf3;
@@ -99,6 +99,12 @@
 .accounts-table {
     width: 100%;
     border-collapse: collapse;
+}
+
+.accounts-table .account-balance {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 

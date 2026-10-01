@@ -1,4 +1,5 @@
 import "../style/AccountCard.css";
+import { formatBalance } from "../utils/formatBalance.js";
 
 function AccountCard({ account }) {
     return (
@@ -12,6 +13,11 @@ function AccountCard({ account }) {
             <div className="account-card-number">
                 <p>Account number</p>
                 <strong>{account.accountNumber}</strong>
+            </div>
+
+            <div className="account-card-balance">
+                <p>Balance</p>
+                <strong>{formatBalance(account.balance)}</strong>
             </div>
 
            <div className="account-card-footer">

@@ -7,14 +7,18 @@ import Button from "../components/Button.jsx";
 import { useNavigate } from "react-router-dom";
 import "../style/Account.css";
 import AccountsRow from "../components/AccountsRow.jsx";
+import { formatBalance } from "../utils/formatBalance.js";
 
 function Accounts({ customer }) {
     const [accounts, setAccounts] = useState([]);
+    const [accountsLoading, setAccountsLoading] = useState(true);
+    const [accountsError, setAccountsError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function getAccounts() {
-            const request = await fetch(
+            try {
+                const request = await fetch(
                 "http://localhost:8080/api/customers/accounts",
                 {
                     method: "GET",
@@ -22,12 +26,22 @@ function Accounts({ customer }) {
                 }
             );
 
-            if (!request.ok) {
-                setAccounts([]);
-            } else {
+                if (!request.ok) {
+                    const error = await request.json().catch(() => null);
+                    setAccountsError(typeof error?.massage === "string" && request.status < 500
+                        ? error.massage : "Unable to load accounts. Please try again.");
+                    return;
+                }
                 const res = await request.json();
-                console.log(res);
+                if (!Array.isArray(res)) {
+                    setAccountsError("Unable to read the account response. Please try again.");
+                    return;
+                }
                 setAccounts(res);
+            } catch {
+                setAccountsError("Unable to load accounts. Check your connection and try again.");
+            } finally {
+                setAccountsLoading(false);
             }
         }
 
@@ -35,7 +49,7 @@ function Accounts({ customer }) {
     }, []);
 
     if (!customer) {
-        return <p>Loading...</p>;
+        return accountsError ? <p role="alert">{accountsError}</p> : <p>Loading...</p>;
     }
 
     return (
@@ -69,7 +83,10 @@ function Accounts({ customer }) {
                             + New Account
                         </Button>
                     </section>
-                    <div className="accounts-table-container">
+                    {accountsLoading ? <p role="status">Loading accounts...</p>
+                        : accountsError ? <p role="alert">{accountsError}</p>
+                        : accounts.length === 0 ? <p>No accounts found.</p>
+                        : <div className="accounts-table-container">
                         <table className="accounts-table">
                             <thead>
                                 <tr>
@@ -77,6 +94,7 @@ function Accounts({ customer }) {
                                     <th>Type</th>
                                     <th>Account Number</th>
                                     <th>Status</th>
+                                    <th className="account-balance">Balance (SEK)</th>
                                 </tr>
                             </thead>
 
@@ -104,11 +122,14 @@ function Accounts({ customer }) {
                                                 {account.status}
                                             </span>
                                         </td>
+                                        <td className="account-balance">
+                                            {formatBalance(account.balance)}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </div>}
                    
 
                 </main>
