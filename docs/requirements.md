@@ -21,3 +21,12 @@
 - Financial movements are recorded using ledger entries.
 - Only successful financial movements affect the ledger.
 - An account balance is determined from its ledger entries.
+- Ledger entry amounts are signed: positive for incoming money, negative for outgoing money.
+- An account with no ledger entries has a zero balance.
+- Monetary values use `BigDecimal` and are implicitly SEK in V1.
+- Non-zero fractional digits beyond two decimal places are rejected; harmless trailing zeros are accepted.
+
+The current implementation provides transaction/ledger persistence and internal
+balance calculation. Deposit, withdrawal, transfer, and API balance exposure are
+subsequent implementation steps; the requirements above do not imply those
+operations are already available.

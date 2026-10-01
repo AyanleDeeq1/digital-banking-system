@@ -206,13 +206,18 @@ The request must include the authenticated session cookie.
     "name": "Main Account",
     "accountNumber": "3424-5,8392014756",
     "type": "CHECKING",
-    "status": "ACTIVE"
+    "status": "ACTIVE",
+    "balance": 0.00
   }
 ]
 ```
 
 If the customer has multiple accounts, each account is returned in the
 response array.
+
+Each account includes a numeric `balance` in SEK, calculated as the sum of its
+signed ledger entries. Accounts without ledger entries return zero. Balance is
+calculated for the authenticated customer's accounts and is not stored on `Account`.
 
 ---
 
@@ -225,7 +230,8 @@ The customer is identified from the authenticated session. The client
 does not send a customer ID.
 
 The backend generates the account number and creates the account with
-`ACTIVE` status.
+`ACTIVE` status. The response includes a calculated balance of zero because the
+new account has no ledger entries.
 
 #### Request
 
@@ -257,7 +263,8 @@ Supported account types are:
   "name": "Savings Account",
   "accountNumber": "3424-5,1059382741",
   "type": "SAVINGS",
-  "status": "ACTIVE"
+  "status": "ACTIVE",
+  "balance": 0.00
 }
 ```
 
@@ -278,7 +285,6 @@ Supported account types are:
 
 ## Transactions
 
-Transaction, ledger, and account balance functionality is currently
-being designed.
-
-Transaction endpoints have not yet been defined.
+Transaction and ledger persistence and balance calculation are implemented.
+The existing account listing and creation responses expose calculated balances.
+Deposit, withdrawal, transfer, and transaction-history endpoints are not implemented.
