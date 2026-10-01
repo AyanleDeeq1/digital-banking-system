@@ -10,6 +10,26 @@ The design will evolve as new requirements are introduced.
 
 ![Database Diagram](../images/database-design.png)
 
+## Debit Card Persistence
+
+The `card` table supplements the diagram above:
+
+- `id`: generated primary key
+- `card_number`: required unique `VARCHAR(16)`
+- `cvc2`: required `VARCHAR(3)`, not unique
+- `expiry_date`: required `DATE`
+- `customer_id`: required unique foreign key to `customer`
+- `account_id`: required unique foreign key to `account`
+
+Each card belongs to one customer and that customer's registration-created
+Main Account. Existing customers/accounts can have no card. Registration saves
+customer, credentials, account, and card in one transaction. Number generation
+tries at most ten candidates when known collisions occur. A concurrent database
+uniqueness failure aborts registration; it is not retried in the failed transaction.
+These are simulated card details, stored as strings without a production card
+encryption system. Hibernate value/error logging is disabled to avoid disclosing
+card details in bind or duplicate-key messages.
+
 ## Transaction and Ledger Persistence
 
 The logical `Transaction` in the diagram maps to `bank_transaction`:

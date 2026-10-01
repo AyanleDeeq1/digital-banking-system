@@ -6,11 +6,28 @@ The domain model represents the current core concepts of the Digital Banking Sys
 classDiagram
     Customer "1" -- "1..*" Account
     Customer "1" *-- "1" PasswordCredential
+    Customer "1" -- "0..1" Card
+    Account "1" -- "0..1" Card
     Account "1" -- "0..*" LedgerEntry
     Transaction "1" -- "0..*" LedgerEntry
 ```
 
 ## Design Decisions
+
+### Debit Card
+
+New registration creates one debit card linked directly to the newly created
+Main Account and its customer. Existing customers can have no card. Opening
+additional accounts does not issue cards. A card's account must belong to its
+customer. Credit cards and card payments are not implemented.
+
+Card details are simulated: a unique 16-digit string number, a non-unique
+3-digit string CVC2, and an expiry date three calendar years after issuance
+using Europe/Stockholm. Leading zeros are preserved; leap-day expiry follows
+Java calendar-year arithmetic (February 28 in a non-leap year).
+
+The authenticated owner's API exposes the full card number, its last four digits, the customer's current full
+name, expiry, CVC2, and the constant type `DEBIT`.
 
 ### Password Credentials
 

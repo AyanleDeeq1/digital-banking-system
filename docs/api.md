@@ -17,7 +17,10 @@ State-changing requests are protected using CSRF.
 Registers a new customer.
 
 When registration is completed, the customer's first bank account is
-created automatically.
+created automatically, together with one debit card linked to that Main Account.
+Customer, credentials, account, and card are saved atomically. Card issuance
+failure returns `503` using the existing error response (`status`, `massage`)
+and rolls back registration. Additional account creation does not issue cards.
 
 #### Request
 
@@ -270,6 +273,31 @@ Supported account types are:
 
 ---
 
+## Debit Card
+
+`GET /api/customers/card` requires the authenticated session cookie. The server
+identifies the customer from the session; no customer or account ID is accepted
+for selecting a card. Successful responses use `Cache-Control: no-store`.
+
+**Status:** `200 OK`
+
+```json
+{
+  "cardNumber": "0000000000000123",
+  "lastFour": "0123",
+  "cardHolderName": "John Doe",
+  "expiryDate": "2029-10-01",
+  "cvc2": "007",
+  "type": "DEBIT"
+}
+```
+
+The full card number is returned only to the authenticated owner. Internal IDs are not returned. Card numbers and CVC2
+are simulated values; strings preserve leading zeros. Expiry is an ISO date,
+displayed as MM/YY in the UI. Existing customers without a card receive `404`
+with the existing `status` and `massage` error fields; cards are not backfilled.
+Unauthenticated requests are rejected by existing Spring Security (`403`).
+
 ## Current API Summary
 
 | Method | Endpoint | Description |
@@ -279,6 +307,7 @@ Supported account types are:
 | `POST` | `/api/customers/login` | Authenticate a customer |
 | `GET` | `/api/customers/me` | Get the authenticated customer |
 | `GET` | `/api/customers/accounts` | Get the authenticated customer's accounts |
+| `GET` | `/api/customers/card` | Get the authenticated customer's debit card |
 | `POST` | `/api/customers/createAccount` | Create an additional account |
 
 ---

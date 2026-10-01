@@ -8,6 +8,17 @@
 - A customer can view their bank accounts.
 - A customer can view the balance of their accounts.
 
+## Debit Cards
+
+- New registration issues one debit card for the registration-created Main Account.
+- Registration, credentials, account, and card creation succeed or roll back together.
+- Additional account creation does not issue another card; existing customers are not backfilled.
+- Card numbers contain 16 random digits and are unique; CVC2 contains three random digits and is not unique.
+- Leading zeros are preserved. Expiry is three calendar years from issuance in Europe/Stockholm.
+- An authenticated customer can view only their own card, including the full card number on My Card.
+- The My Card sidebar page reuses the existing card design with real API data; Home keeps its sample card.
+- Credit cards, card payments, and card management operations remain outside this feature.
+
 ## Transactions
 
 - A customer can deposit money into an account.
