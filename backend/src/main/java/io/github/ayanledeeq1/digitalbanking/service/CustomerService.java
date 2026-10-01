@@ -1,7 +1,9 @@
 package io.github.ayanledeeq1.digitalbanking.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,11 +27,13 @@ public class CustomerService {
     private  final CustomerRepository customerRepository;
     private  final PasswordEncoder passwordEncoder;
     private  final AccountService accountService;
+    private final AccountBalanceService accountBalanceService;
 
-    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AccountService accountService) {
+    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AccountService accountService, AccountBalanceService accountBalanceService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
         this.accountService = accountService;
+        this.accountBalanceService = accountBalanceService;
     }
 
 
@@ -73,14 +77,17 @@ public class CustomerService {
         return  responseDto;
     }
 
+    @Transactional(readOnly = true)
     public List<AccountResponseDto> getCustomerAccounts(String email) {
         Customer customer = getCustomerByEmail(email);
 
         List<Account> accounts = customer.getAccounts();
+        Map<Long, BigDecimal> balances = accountBalanceService.getBalances(
+                accounts.stream().map(Account::getId).toList());
         
         List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
         for (Account account : accounts) {
-            AccountResponseDto responseDto = new  AccountResponseDto(account.getId(), account.getAccountName(), account.getAccountNumber(), account.getType(), account.getStatus());
+            AccountResponseDto responseDto = new  AccountResponseDto(account.getId(), account.getAccountName(), account.getAccountNumber(), account.getType(), account.getStatus(), balances.get(account.getId()));
             accountResponseDtoList.add(responseDto);
         }
         return  accountResponseDtoList;
@@ -105,7 +112,8 @@ public class CustomerService {
             createdAccount.getAccountName(),
             createdAccount.getAccountNumber(), 
             createdAccount.getType(),
-            createdAccount.getStatus()
+            createdAccount.getStatus(),
+            accountBalanceService.getBalance(createdAccount.getId())
         );
         return  responseDto;
 

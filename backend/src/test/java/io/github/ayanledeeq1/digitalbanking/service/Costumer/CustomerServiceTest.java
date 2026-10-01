@@ -4,8 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -15,22 +19,28 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import io.github.ayanledeeq1.digitalbanking.dto.accountDto.AccountResponseDto;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.CustomerRegisterResponseDto;
 import io.github.ayanledeeq1.digitalbanking.dto.customerdto.RegisterCustomerDto;
 import io.github.ayanledeeq1.digitalbanking.enums.AccountStatus;
+import io.github.ayanledeeq1.digitalbanking.enums.AccountType;
 import io.github.ayanledeeq1.digitalbanking.exception.CustomerNotFoundException;
 import io.github.ayanledeeq1.digitalbanking.model.Account;
 import io.github.ayanledeeq1.digitalbanking.model.Customer;
 import io.github.ayanledeeq1.digitalbanking.model.PasswordCredential;
 import io.github.ayanledeeq1.digitalbanking.repository.CustomerRepository;
 import io.github.ayanledeeq1.digitalbanking.service.AccountService;
+import io.github.ayanledeeq1.digitalbanking.service.AccountBalanceService;
 import io.github.ayanledeeq1.digitalbanking.service.CustomerService;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
     @Mock 
     AccountService accountService;
+    @Mock
+    AccountBalanceService accountBalanceService;
     @Mock 
     CustomerRepository customerRepository;
     @Mock 
@@ -91,6 +101,28 @@ public class CustomerServiceTest {
         when(customerRepository.findByEmail("ali@gmail.com")).thenReturn(Optional.empty());
         assertThrows(CustomerNotFoundException.class, () ->  customerService.getCustomerById(99L));
         assertThrows(CustomerNotFoundException.class, () ->  customerService.getCustomerByEmail("ali@gmail.com"));
+    }
+
+    @Test
+    void accountListUsesOneGroupedBalanceCalculation() {
+        Customer customer = new Customer("aye", "deeq", "aye@gmail.com", new PasswordCredential("hash"));
+        Account first = new Account("Checking", "3424-5,0000000001", AccountType.CHECKING, AccountStatus.ACTIVE);
+        Account second = new Account("Savings", "3424-5,0000000002", AccountType.SAVINGS, AccountStatus.ACTIVE);
+        ReflectionTestUtils.setField(first, "id", 1L);
+        ReflectionTestUtils.setField(second, "id", 2L);
+        customer.addAccount(first);
+        customer.addAccount(second);
+        when(customerRepository.findByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
+        when(accountBalanceService.getBalances(List.of(1L, 2L)))
+                .thenReturn(Map.of(1L, new BigDecimal("70.15"), 2L, new BigDecimal("0.00")));
+
+        List<AccountResponseDto> accounts = customerService.getCustomerAccounts(customer.getEmail());
+
+        assertEquals(2, accounts.size());
+        assertEquals(new BigDecimal("70.15"), accounts.get(0).getBalance());
+        assertEquals(new BigDecimal("0.00"), accounts.get(1).getBalance());
+        verify(accountBalanceService).getBalances(List.of(1L, 2L));
+        verifyNoMoreInteractions(accountBalanceService);
     }
 
 
