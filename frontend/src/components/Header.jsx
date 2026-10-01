@@ -39,17 +39,9 @@ function Header({customer, page}) {
                     }
                     {customer && (
                         <>
-                            {page === "dashboard" && (
-                                <div className="customer-avatar">
-                                    {customer.firstName.charAt(0).toUpperCase()}
-                                    {customer.lastName.charAt(0).toUpperCase()}
-                                </div>
-                            )}
-
                             {page === "home" && (
                                 <>
                                     <Link to="/dashboard">Dashboard</Link>
-                                    <Link to="/profile">Profile</Link>
                                     <Link to="/accounts">Accounts</Link>
                                      <Button variant="logout">
                                              Logout
@@ -57,6 +49,11 @@ function Header({customer, page}) {
                                      
                                 </>
                             )}
+                            <Link to="/profile" className="customer-avatar" aria-label="Open profile"
+                                aria-current={page === "profile" ? "page" : undefined}>
+                                {customer.firstName?.charAt(0).toUpperCase()}
+                                {customer.lastName?.charAt(0).toUpperCase()}
+                            </Link>
                         </>
                     )}
             </nav>

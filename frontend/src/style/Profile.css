@@ -1,0 +1,18 @@
+.profile-page { min-height: 100vh; display: flex; flex-direction: column; }
+.profile-body { flex: 1; display: flex; }
+.profile-main { flex: 1; min-width: 0; padding: 48px 56px; background: #f6f8fb; }
+.profile-main h1 { color: #0b2347; margin: 0 0 12px; }
+.profile-intro { color: #66768c; margin-bottom: 32px; }
+.profile-details { max-width: 680px; background: white; border: 1px solid #dfe7f1; border-radius: 24px; box-shadow: 0 12px 32px #173e7008; overflow: hidden; }
+.profile-identity { display: flex; align-items: center; gap: 20px; padding: 32px; background: linear-gradient(120deg, #edf5ff, #fff); }
+.profile-identity h2 { color: #0b2347; font-size: 24px; overflow-wrap: anywhere; min-width: 0; }
+.profile-avatar { width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; background: #dcecff; color: #1677e8; display: grid; place-items: center; font-size: 24px; font-weight: 700; }
+.profile-details dl { margin: 0; padding: 0 32px; }
+.profile-details dl > div { padding: 24px 0; border-top: 1px solid #e8edf4; }
+.profile-details dt { color: #66768c; font-size: 13px; margin-bottom: 8px; }
+.profile-details dd { margin: 0; color: #0b2347; font-weight: 500; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+    .profile-main { padding: 24px 16px; }
+    .profile-identity { padding: 24px 20px; flex-wrap: wrap; }
+    .profile-details dl { padding: 0 20px; }
+}

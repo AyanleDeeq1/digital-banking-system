@@ -18,10 +18,6 @@ function SideBar() {
                     Accounts
                 </NavLink>
 
-                <NavLink to="/profile">
-                    Profile
-                </NavLink>
-
                 <NavLink to="/my-card">
                     My Card
                 </NavLink>

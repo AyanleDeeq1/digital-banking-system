@@ -58,3 +58,18 @@ header {
     font-size: 15px;
     font-weight: 700;
 }
+
+.header-nav a.customer-avatar {
+    padding: 0;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: #eaf4ff;
+    color: #1677e8;
+    font-weight: 700;
+}
+
+.header-nav a.customer-avatar:hover { background-color: #d8eaff; }
+.header-nav a.customer-avatar:focus-visible {
+    outline: 3px solid #1677e8;
+    outline-offset: 4px;
+}
