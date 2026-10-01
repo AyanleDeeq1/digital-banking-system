@@ -28,12 +28,14 @@ public class CustomerService {
     private  final PasswordEncoder passwordEncoder;
     private  final AccountService accountService;
     private final AccountBalanceService accountBalanceService;
+    private final CardService cardService;
 
-    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AccountService accountService, AccountBalanceService accountBalanceService) {
+    public  CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AccountService accountService, AccountBalanceService accountBalanceService, CardService cardService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
         this.accountService = accountService;
         this.accountBalanceService = accountBalanceService;
+        this.cardService = cardService;
     }
 
 
@@ -65,6 +67,7 @@ public class CustomerService {
 
         Customer savedcustomer = customerRepository.save(customer); //persiste the customer and passowrd credentail
         accountService.saveAccount(newAccount);
+        cardService.issueCard(savedcustomer, newAccount);
 
         // creeate response dto object
         CustomerRegisterResponseDto responseDto = new CustomerRegisterResponseDto(

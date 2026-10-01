@@ -67,4 +67,6 @@ public class Account {
         return  id;
     }
 
+    public Customer getCustomer() { return customer; }
+
 }

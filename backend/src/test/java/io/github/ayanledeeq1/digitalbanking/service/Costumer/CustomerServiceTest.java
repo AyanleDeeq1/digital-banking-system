@@ -34,6 +34,7 @@ import io.github.ayanledeeq1.digitalbanking.repository.CustomerRepository;
 import io.github.ayanledeeq1.digitalbanking.service.AccountService;
 import io.github.ayanledeeq1.digitalbanking.service.AccountBalanceService;
 import io.github.ayanledeeq1.digitalbanking.service.CustomerService;
+import io.github.ayanledeeq1.digitalbanking.service.CardService;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -41,6 +42,8 @@ public class CustomerServiceTest {
     AccountService accountService;
     @Mock
     AccountBalanceService accountBalanceService;
+    @Mock
+    CardService cardService;
     @Mock 
     CustomerRepository customerRepository;
     @Mock 
@@ -71,6 +74,7 @@ public class CustomerServiceTest {
 
         assertEquals("123456767", captureAccount.getAccountNumber());
         assertEquals(AccountStatus.ACTIVE, captureAccount.getStatus());
+        verify(cardService).issueCard(captureAccount.getCustomer(), captureAccount);
     }
 
     @Test
