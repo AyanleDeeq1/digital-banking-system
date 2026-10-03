@@ -21,7 +21,8 @@
         #064e3b,
         #0f766e
     );
-}count-card-header {
+}
+.account-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;

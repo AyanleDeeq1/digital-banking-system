@@ -11,7 +11,10 @@
 
 .dashboard-main {
     flex: 1;
-    padding: 48px 56px;
+    padding: 28px 36px;
+    min-width: 0;
+    max-width: 1500px;
+    margin: 0 auto;
 }
 
 .dashboard-heading {
@@ -41,7 +44,7 @@
 }
 
 .accounts-section {
-    margin-top: 48px;
+    margin-top: 28px;
 }
 
 .accounts-heading {
@@ -69,12 +72,12 @@
 
 .accounts-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 460px));
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     gap: 24px;
     margin-top: 24px;
 }
 .quick-actions {
-    width: 944px;
+    width: 100%;
     margin-top: 32px;
     padding: 24px;
 
@@ -161,3 +164,23 @@
 }
 .quick-action-card:disabled { cursor: not-allowed; opacity: .6; }
 .quick-action-card:disabled:hover { transform: none; box-shadow: none; }
+
+.quick-actions-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.dashboard-account { position: relative; }
+.dashboard-account .account-card, .dashboard-main .account-summary { max-width: none; height: 100%; }
+.dashboard-account-link { position: absolute; bottom: 28px; right: 26px; max-width: 50%; border: 0; background: transparent; color: white; font: inherit; font-size: 12px; cursor: pointer; }
+.dashboard-main :focus-visible { outline: 3px solid #1677e8; outline-offset: 4px; }
+.dashboard-account-link:focus-visible { outline-color: white; }
+@media (max-width: 1050px) { .dashboard-main { padding: 24px; } .accounts-grid { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+    .dashboard-body { flex-direction: column; }
+    .dashboard-page .sidebar { width: 100%; padding: 12px 16px; }
+    .dashboard-page .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+    .dashboard-page .sidebar-bottom { margin-top: 12px; padding-top: 12px; }
+    .dashboard-main { width: 100%; padding: 16px; }
+    .dashboard-heading { padding: 22px; }
+    .dashboard-heading h1 { font-size: 25px; }
+    .accounts-heading { align-items: center; justify-content: space-between; gap: 12px; }
+    .quick-actions-grid { grid-template-columns: 1fr; }
+    .quick-actions { padding: 18px; }
+}

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AccountSummary from '../components/AccountSummary.jsx';
 import deposit from '../assets/deposit.png'
 import transfer from '../assets/transfer.png'
+import TransactionHistory from '../components/TransactionHistory.jsx';
 
 
 function Dashboard({customer, logout}) {
@@ -16,7 +17,7 @@ function Dashboard({customer, logout}) {
     const [accountsLoading, setAccountsLoading] = useState(true)
     const [accountsError, setAccountsError] = useState(null)
     const navigate = useNavigate()
-    const mainAccount = accounts[0]
+    const mainAccount = [...accounts].sort((a, b) => a.id - b.id)[0]
 
     useEffect(() => {
         async function getAccounts() {
@@ -79,7 +80,8 @@ function Dashboard({customer, logout}) {
                             : accountsError ? <p role="alert">{accountsError}</p>
                             : accounts.length === 0 ? <p>No accounts found.</p>
                             : <div className="accounts-grid">
-                            {mainAccount && <AccountCard  account={mainAccount}/>}
+                            {mainAccount && <div className="dashboard-account"><AccountCard account={mainAccount}/>
+                                <button className="dashboard-account-link" type="button" onClick={() => navigate(`/accounts?account=${mainAccount.id}`)}>View transaction history →</button></div>}
                             <AccountSummary  accounts={accounts}/>
 
                 
@@ -113,6 +115,7 @@ function Dashboard({customer, logout}) {
                             </div>
                         </section>
                     </section>
+                    <TransactionHistory recent />
                     
                 </main>
 

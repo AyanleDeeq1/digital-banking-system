@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import AccountCard from "../components/AccountCard.jsx";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import SideBar from "../components/SideBar.jsx";
 import Button from "../components/Button.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../style/Account.css";
-import AccountsRow from "../components/AccountsRow.jsx";
+import TransactionHistory from "../components/TransactionHistory.jsx";
 import { formatBalance } from "../utils/formatBalance.js";
 
 function Accounts({ customer , logout}) {
@@ -14,6 +13,8 @@ function Accounts({ customer , logout}) {
     const [accountsLoading, setAccountsLoading] = useState(true);
     const [accountsError, setAccountsError] = useState(null);
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const selectedAccount = accounts.find(account => String(account.id) === searchParams.get('account')) || accounts[0];
 
     useEffect(() => {
         async function getAccounts() {
@@ -86,23 +87,26 @@ function Accounts({ customer , logout}) {
                     {accountsLoading ? <p role="status">Loading accounts...</p>
                         : accountsError ? <p role="alert">{accountsError}</p>
                         : accounts.length === 0 ? <p>No accounts found.</p>
-                        : <div className="accounts-table-container">
+                        : <><section className="accounts-directory-heading"><div><h2>Your accounts <span>{accounts.length}</span></h2>
+                            <p>Select an account to view its transaction history.</p></div></section>
+                        <div className="accounts-table-container" tabIndex={0} role="region" aria-label="Your accounts table">
                         <table className="accounts-table">
                             <thead>
                                 <tr>
-                                    <th>Account Name</th>
-                                    <th>Type</th>
-                                    <th>Account Number</th>
-                                    <th>Status</th>
-                                    <th className="account-balance">Balance (SEK)</th>
+                                    <th scope="col">Account Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Account Number</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" className="account-balance">Balance (SEK)</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {accounts.map((account) => (
-                                    <tr key={account.id}>
+                                    <tr key={account.id} className={selectedAccount?.id === account.id ? 'selected-account' : ''}>
                                         <td className="account-name">
-                                            {account.name}
+                                            <button type="button" className="account-select" aria-pressed={selectedAccount?.id === account.id}
+                                                onClick={() => setSearchParams({ account: String(account.id) })}>{account.name}<span>View history →</span></button>
                                         </td>
 
                                         <td>
@@ -129,7 +133,8 @@ function Accounts({ customer , logout}) {
                                 ))}
                             </tbody>
                         </table>
-                    </div>}
+                    </div>
+                    {selectedAccount && <TransactionHistory key={selectedAccount.id} accountId={selectedAccount.id} accountName={selectedAccount.name} />}</>}
                    
 
                 </main>

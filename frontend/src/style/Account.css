@@ -11,7 +11,10 @@
 
 .accounts-main {
     flex: 1;
-    padding: 48px 56px;
+    padding: 28px 36px;
+    min-width: 0;
+    max-width: 1500px;
+    margin: 0 auto;
 }
 
 
@@ -233,4 +236,24 @@
 
 .account-action button:hover {
     text-decoration: underline;
+}
+
+.accounts-directory-heading { margin: 0 0 18px; }
+.accounts-directory-heading h2 { margin: 0; color: #0b2347; font-size: 22px; }
+.accounts-directory-heading h2 span { margin-left: 8px; padding: 4px 9px; background: #eaf4ff; color: #1677e8; border-radius: 8px; font-size: 13px; }
+.accounts-directory-heading p { color: #66768c; font-size: 14px; }
+.account-select { display: flex; flex-direction: column; gap: 8px; border: 0; background: transparent; color: #0b2347; font: inherit; font-weight: 700; text-align: left; padding: 6px 0; cursor: pointer; }
+.account-select span { color: #0864c7; font-size: 12px; font-weight: 500; }
+.accounts-table .selected-account { background: #eef6ff; }
+.accounts-table .selected-account td:first-child { box-shadow: inset 3px 0 #1677e8; }
+.accounts-main :focus-visible { outline: 3px solid #1677e8; outline-offset: 3px; }
+@media (max-width: 1050px) { .accounts-main { padding: 24px; } }
+@media (max-width: 700px) {
+    .accounts-body { flex-direction: column; }
+    .accounts-page .sidebar { width: 100%; padding: 12px 16px; }
+    .accounts-page .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+    .accounts-page .sidebar-bottom { margin-top: 12px; padding-top: 12px; }
+    .accounts-main { width: 100%; padding: 16px; }
+    .accounts-page-heading { flex-direction: column; align-items: flex-start; padding: 22px; }
+    .accounts-table { min-width: 680px; }
 }
