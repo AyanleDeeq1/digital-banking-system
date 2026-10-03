@@ -95,6 +95,11 @@ normalized without rounding; non-zero fractional digits beyond two places are re
 An account can have multiple ledger entries, and a transaction can produce multiple ledger entries.
 For example, a transfer between two accounts can produce one ledger entry for the source account and another ledger entry for the destination account.
 
+Transaction history reads these account-specific movements without changing balances.
+History uses the signed ledger amount and the linked transaction's time/type/status.
+Recent customer activity retains both sides of transfers between owned accounts,
+with account context, and excludes movements on other customers' accounts.
+
 ### Account Balance
 
 Balance is not stored directly on `Account`.

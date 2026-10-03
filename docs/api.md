@@ -307,6 +307,8 @@ Unauthenticated requests are rejected by existing Spring Security (`403`).
 | `POST` | `/api/customers/login` | Authenticate a customer |
 | `GET` | `/api/customers/me` | Get the authenticated customer |
 | `GET` | `/api/customers/accounts` | Get the authenticated customer's accounts |
+| `GET` | `/api/customers/accounts/{accountId}/transactions` | Get an owned account's ledger history |
+| `GET` | `/api/customers/transactions/recent` | Get the latest five owned account movements |
 | `GET` | `/api/customers/card` | Get the authenticated customer's debit card |
 | `POST` | `/api/customers/createAccount` | Create an additional account |
 
@@ -316,7 +318,44 @@ Unauthenticated requests are rejected by existing Spring Security (`403`).
 
 Transaction and ledger persistence and balance calculation are implemented.
 The existing account listing and creation responses expose calculated balances.
-Simulated ATM deposits and withdrawals are implemented below. Transaction history is not implemented.
+Simulated ATM deposits and withdrawals and authenticated ledger-based history are implemented below.
+
+### Transaction History
+
+- `GET /api/customers/accounts/{accountId}/transactions` returns all ledger movements
+  for one owned account. Missing account returns 404; another customer's account
+  returns 403 using the existing `status` and `massage` error response.
+- `GET /api/customers/transactions/recent` returns at most five ledger movements
+  across accounts owned by the session customer. The limit is fixed, with no pagination.
+
+Both require session authentication (unauthenticated requests return 403), accept no
+customer ID, and return `200 OK`, `Cache-Control: no-store`, and an array (empty `[]`
+when there are no movements). Each item has this shape:
+
+```json
+{
+  "ledgerEntryId": 456,
+  "transactionId": 123,
+  "accountId": 1,
+  "accountName": "Main Account",
+  "type": "TRANSFER",
+  "amount": -500.00,
+  "createdAt": "2026-10-02T10:00:00Z",
+  "status": "COMPLETED"
+}
+```
+
+`amount` is the signed ledger amount in SEK, not the positive transaction amount.
+`createdAt`, `type`, and `status` come from the linked transaction. Rows are ordered
+by creation time descending, then transaction ID and ledger-entry ID descending for
+deterministic ties. An own-account transfer appears as two movements with the same
+transaction ID and different account/ledger-entry IDs, one outgoing and one incoming.
+External transfers expose only the owned account's movement; no counterparty data is
+returned. History includes recorded ledger movements only, not failed attempts or
+pending transactions without entries. No descriptions or balances are added.
+
+Dashboard shows the latest five movements. Accounts keeps the full account list;
+selecting an account loads its history in place. Dates display in Europe/Stockholm.
 
 ### Transfer Money
 
@@ -412,7 +451,7 @@ zeros. Withdrawal allows exact-balance spending and rejects overdraft.
 The Dashboard links to one `/deposit-withdraw` React page. Insert/PIN/menu/operation/result
 states change the live overlay on the unchanged ATM image. Success re-fetches account
 data before displaying the new balance. Eject clears the server verification and UI
-inputs. No physical cash inventory, banknote denominations, transaction history, PIN
+inputs. No physical cash inventory, banknote denominations, PIN
 reset/change, external bank, fee, receipt, or ATM-location endpoint is introduced.
 ### Logout Customer
 
