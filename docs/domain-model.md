@@ -76,8 +76,7 @@ A transaction may be associated with multiple `LedgerEntry` records.
 
 A transaction stores its type, positive `BigDecimal` amount, `Instant` creation
 time, and status. The persistence model supports all three statuses; V1 financial
-operations will persist only `COMPLETED` transactions. Operation services are not
-implemented in the current foundational step.
+operations persist only `COMPLETED` transactions. Transfers and simulated ATM deposits and withdrawals are implemented.
 
 ### Ledger Entries
 
@@ -105,6 +104,35 @@ An account's balance is derived from its `LedgerEntry` records.
 Balance is the sum of signed ledger amounts. An account with no entries has a
 balance of zero. `AccountBalanceService` provides internal single-account and
 grouped calculations; callers are responsible for resolving and authorizing accounts.
-Balance is not yet exposed through the account API in this foundational step.
+The account API exposes ledger-derived balances to the authenticated owner.
 
 This allows the ledger to act as the record of financial changes to the account.
+
+### Customer Transfers
+
+Both own-account transfers and transfers to another URBank customer use one
+`TRANSFER` transaction with status `COMPLETED` and exactly two entries: a negative
+source debit and equal positive destination credit. The source belongs to the
+session customer; both accounts must be ACTIVE and different. No overdraft is allowed.
+The entire movement commits or rolls back together; rejected requests do not persist
+PENDING or FAILED attempts. Monetary normalization and SEK semantics remain unchanged.
+### Simulated ATM and Card PIN
+
+The existing card has a randomly generated four-digit PIN encrypted with AES-256-GCM.
+Each encryption uses a new random nonce and authenticated ciphertext. Recoverable
+encryption supports the owner's requested Show PIN feature; PINs are not stored as
+plaintext or returned by the ordinary card endpoint. Show PIN checks the owner's
+application password with the existing BCrypt PasswordEncoder before decrypting.
+No customer ID is accepted. Password/PIN DTOs redact their string representations.
+
+ATM PIN matching happens on the backend with constant-time comparison after decryption.
+Successful verification records the current card ID in the existing HTTP session.
+Every cash operation checks that verification belongs to the current principal's card.
+Incorrect PIN or Eject Card clears verification; session expiry ends it. No separate
+ATM-session database or reset/change workflow is added.
+
+Deposit and withdrawal each create one completed transaction with a positive amount
+and one ledger entry on the selected ACTIVE owned account: positive for deposit,
+negative for withdrawal. The linked Main Account does not restrict which owned ACTIVE
+account may be selected. Card has no balance. Withdrawal checks ledger-derived funds
+after acquiring the account lock, allows exact-balance withdrawal, and forbids overdraft.

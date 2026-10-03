@@ -21,9 +21,9 @@
 
 ## Transactions
 
-- A customer can deposit money into an account.
-- A customer can withdraw money from an account.
-- A customer can transfer money between accounts.
+- Customers can deposit money through the simulated URBank ATM.
+- Customers can withdraw money through the simulated URBank ATM without overdrawing their accounts.
+- An authenticated customer can initiate internal SEK transfers between their own accounts or to another URBank customer account.
 - Supported transaction types are `DEPOSIT`, `WITHDRAWAL`, and `TRANSFER`.
 - Supported transaction statuses are `PENDING`, `COMPLETED`, and `FAILED`.
 
@@ -37,7 +37,23 @@
 - Monetary values use `BigDecimal` and are implicitly SEK in V1.
 - Non-zero fractional digits beyond two decimal places are rejected; harmless trailing zeros are accepted.
 
-The current implementation provides transaction/ledger persistence and internal
-balance calculation. Deposit, withdrawal, transfer, and API balance exposure are
-subsequent implementation steps; the requirements above do not imply those
-operations are already available.
+Transfers require an owned source account and ACTIVE source and destination accounts.
+Source and destination must differ. The positive amount follows the existing monetary
+precision rules. Sufficient ledger-derived funds are required; exact-balance transfers
+are allowed and overdraft is rejected. Failed validation persists no financial records.
+
+For URBank V1, recipients are entered as ten digits. The backend resolves them using
+the existing fixed clearing prefix; stored numbers such as `3424-5,1234567890` remain
+unchanged. The Dashboard has one Deposit / Withdraw action linking to the simulated ATM.
+## Simulated URBank ATM
+
+- One `/deposit-withdraw` page uses the existing ATM image, with live screen controls.
+- Insert the customer's existing debit card and verify its four-digit PIN on the backend before cash operations.
+- Registration generates a random four-digit PIN, preserving leading zeros. PINs are encrypted at rest.
+- My Card can show the actual PIN only after verifying the owner's application password; PIN display hides after 30 seconds.
+- Deposits and withdrawals accept only ACTIVE accounts owned by the session customer, including additional accounts.
+- Deposit creates one COMPLETED DEPOSIT and one positive ledger entry; withdrawal creates one COMPLETED WITHDRAWAL and one negative entry.
+- Amounts follow existing SEK monetary rules. Exact-balance withdrawal is allowed; overdraft is rejected.
+- Cash operations are atomic, lock the affected account, and re-fetch authoritative balances after success.
+- Eject Card clears ATM verification from the server session and clears sensitive form state.
+- This simulation does not model physical cash inventory, denominations, fees, receipts, or PIN reset/change workflows.

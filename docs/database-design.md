@@ -58,6 +58,35 @@ zero. Grouped queries calculate balances for several account IDs together.
 An aggregate balance is not restricted to the precision of an individual entry.
 
 Schema management remains Hibernate `ddl-auto: update` for the application and
-`create-drop` for tests. No migration strategy has been introduced. Financial
-operation services, account locking, and HTTP endpoints are not part of this
-foundational implementation step.
+`create-drop` for tests. No migration strategy has been introduced. Transfers use the existing persistence model without schema changes.
+
+## Transfer Persistence and Concurrency
+
+A successful transfer saves one completed transaction and two equal, opposite signed
+ledger entries atomically. The service uses READ_COMMITTED isolation and pessimistic
+write locks on both Account rows, acquired by ascending account ID in separate queries.
+The source balance is read only after both locks are held. All future financial writers
+must follow the same account-lock protocol to preserve this concurrency guarantee.
+
+Account-number storage remains unchanged. Current V1 recipient input is ten digits;
+the backend performs an exact lookup of `3424-5,` plus those digits, matching the
+existing generator and unique full account number. No suffix or fuzzy lookup is used.
+## ATM Persistence and PIN Encryption
+
+The existing `card.pin` column now contains a versioned `v1:` Base64 envelope with
+12-byte nonce and authenticated AES-256-GCM ciphertext; plaintext PINs are never saved
+by new card issuance. No new card relationship or balance column is added.
+`CardPinMigration` transactionally encrypts legacy four-digit values at startup without
+changing their PINs, leaves encrypted values unchanged, and verifies the configured key
+can decrypt existing values. Startup fails for malformed data or the wrong key.
+
+`CARD_PIN_ENCRYPTION_KEY` must be a Base64-encoded, random 32-byte secret, retained across
+restarts and backed up securely. It is supplied through environment/local secret
+configuration, never committed with source code. The test profile uses a separate
+non-secret fixture key. This is a targeted legacy PIN conversion within the existing
+Hibernate schema-management setup, not a new migration framework.
+
+Deposits and withdrawals each persist one completed transaction and one signed entry
+in a READ_COMMITTED transaction. Both lock the Account row with the existing
+pessimistic write-lock query, coordinating with transfers. Withdrawal reads the balance
+only after acquiring the lock. Any financial write failure rolls back both records.
