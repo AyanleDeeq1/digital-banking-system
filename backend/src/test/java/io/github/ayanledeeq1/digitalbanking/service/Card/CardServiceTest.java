@@ -20,6 +20,8 @@ class CardServiceTest {
     @Mock CardRepository repository;
     @Mock CustomerRepository customers;
     @Mock CardDetailsGenerator generator;
+    @Mock CardPinCipher pinCipher;
+    @Mock org.springframework.security.crypto.password.PasswordEncoder encoder;
     @InjectMocks CardService service;
     Customer customer;
     Account account;
@@ -33,12 +35,16 @@ class CardServiceTest {
         when(generator.generateCardNumber()).thenReturn("0000000000000001", "0000000000000002");
         when(repository.existsByCardNumber("0000000000000001")).thenReturn(true);
         when(generator.generateCvc2()).thenReturn("007");
+        when(generator.generatePin()).thenReturn("0123");
+        when(pinCipher.encrypt("0123")).thenReturn("v1:" + "A".repeat(43) + "=");
         when(generator.expiryDate()).thenReturn(LocalDate.of(2029, 10, 1));
         service.issueCard(customer, account);
         ArgumentCaptor<Card> card = ArgumentCaptor.forClass(Card.class);
         verify(repository).saveAndFlush(card.capture());
         assertEquals("0000000000000002", card.getValue().getCardNumber());
         assertEquals("007", card.getValue().getCvc2());
+        assertEquals("v1:" + "A".repeat(43) + "=", card.getValue().getEncryptedPin());
+        verify(pinCipher).encrypt("0123");
         assertSame(account, card.getValue().getAccount());
         assertSame(customer, card.getValue().getCustomer());
     }
@@ -52,6 +58,8 @@ class CardServiceTest {
     @Test void databaseRaceFailsWithoutRetryOrSensitiveExceptionText() {
         when(generator.generateCardNumber()).thenReturn("0000000000000001");
         when(generator.generateCvc2()).thenReturn("007");
+        when(generator.generatePin()).thenReturn("0123");
+        when(pinCipher.encrypt("0123")).thenReturn("v1:" + "A".repeat(43) + "=");
         when(generator.expiryDate()).thenReturn(LocalDate.of(2029, 10, 1));
         when(repository.saveAndFlush(any())).thenThrow(new DataIntegrityViolationException("sensitive database detail"));
         CardIssuanceException failure = assertThrows(CardIssuanceException.class, () -> service.issueCard(customer, account));
@@ -63,8 +71,16 @@ class CardServiceTest {
         Customer other = new Customer("Other", "Owner", "other@example.com", new PasswordCredential("hash"));
         ReflectionTestUtils.setField(other, "id", 2L);
         LocalDate expiry = LocalDate.of(2029, 10, 1);
-        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007", expiry, other, account));
-        assertThrows(IllegalArgumentException.class, () -> new Card("123", "007", expiry, customer, account));
-        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "7", expiry, customer, account));
+        String encryptedPin = "v1:" + "A".repeat(43) + "=";
+        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007", expiry, encryptedPin, other, account));
+        assertThrows(IllegalArgumentException.class, () -> new Card("123", "007", expiry, encryptedPin, customer, account));
+        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "7", expiry, encryptedPin, customer, account));
+    }
+
+    @Test void cardRejectsMissingOrMalformedPin() {
+        for (String pin : new String[] {null, "", "0123", "123", "12345", "abcd"}) {
+            assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007",
+                    LocalDate.of(2029, 10, 1), pin, customer, account));
+        }
     }
 }

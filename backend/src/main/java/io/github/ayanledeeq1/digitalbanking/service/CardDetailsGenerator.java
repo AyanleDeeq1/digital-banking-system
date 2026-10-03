@@ -15,6 +15,7 @@ public class CardDetailsGenerator {
     }
     public String generateCardNumber() { return digits(16); }
     public String generateCvc2() { return digits(3); }
+    public String generatePin() { return digits(4); }
     public LocalDate expiryDate() { return LocalDate.now(clock).plusYears(3); }
     private String digits(int length) {
         StringBuilder result = new StringBuilder(length);

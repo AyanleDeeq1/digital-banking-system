@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 // Shared persistence invariant for DECIMAL(19,2), not a business spending limit.
-final class MonetaryAmount {
+public final class MonetaryAmount {
     private MonetaryAmount() {}
 
-    static BigDecimal normalize(BigDecimal amount) {
+    public static BigDecimal normalize(BigDecimal amount) {
         if (amount == null) {
             throw new IllegalArgumentException("Amount is required");
         }

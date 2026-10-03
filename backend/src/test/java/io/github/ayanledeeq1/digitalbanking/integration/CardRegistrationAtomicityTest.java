@@ -39,7 +39,7 @@ class CardRegistrationAtomicityTest {
 
         mvc.perform(post("/api/customers").with(csrf()).contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                        {"firstName":"Rollback","lastName":"Test","email":"card-rollback@example.com","password":"test-password"}
+                        {"firstName":"Rollback","lastName":"Test","email":"card-rollback@example.com","password":"ValidPass1!"}
                         """))
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.status").value(503))

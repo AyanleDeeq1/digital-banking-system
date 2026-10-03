@@ -33,11 +33,13 @@ class CardIntegrationTest {
     @Autowired AccountRespository accounts;
     @Autowired CardRepository cards;
     @Autowired EntityManager em;
+    @Autowired CardPinCipher pinCipher;
     @MockitoBean CardDetailsGenerator generator;
 
     @BeforeEach void setup() {
         when(generator.generateCardNumber()).thenReturn("0000000000000001", "0000000000000002");
         when(generator.generateCvc2()).thenReturn("007");
+        when(generator.generatePin()).thenReturn("0123");
         when(generator.expiryDate()).thenReturn(LocalDate.of(2029, 10, 1));
     }
     private void register(String email) {
@@ -56,6 +58,8 @@ class CardIntegrationTest {
         assertEquals(initialAccount, card.getAccount().getId());
         assertEquals("0000000000000001", card.getCardNumber());
         assertEquals("007", card.getCvc2());
+        assertNotEquals("0123", card.getEncryptedPin());
+        assertTrue(pinCipher.matches("0123", card.getEncryptedPin()));
         assertEquals(LocalDate.of(2029, 10, 1), card.getExpiryDate());
     }
     @Test void endpointReturnsOnlyOwnFullCardAndPreservesLeadingZeros() throws Exception {
@@ -73,6 +77,7 @@ class CardIntegrationTest {
                 .andExpect(jsonPath("$.type").value("DEBIT"))
                 .andExpect(jsonPath("$.cardNumber").value("0000000000000001"))
                 .andExpect(jsonPath("$.id").doesNotExist())
+                .andExpect(jsonPath("$.pin").doesNotExist())
                 .andExpect(jsonPath("$.customerId").doesNotExist())
                 .andExpect(jsonPath("$.accountId").doesNotExist());
         mvc.perform(get("/api/customers/card").with(user("second@example.com")))
@@ -91,7 +96,7 @@ class CardIntegrationTest {
         mvc.perform(get("/api/customers/card")).andExpect(status().isForbidden());
     }
     private Card extraCard(String number, Customer customer, Account account) {
-        return new Card(number, "007", LocalDate.of(2029, 10, 1), customer, account);
+        return new Card(number, "007", LocalDate.of(2029, 10, 1), pinCipher.encrypt("0123"), customer, account);
     }
     @Test void databaseRejectsDuplicateCardNumber() {
         register("first@example.com");

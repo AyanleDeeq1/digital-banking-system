@@ -16,6 +16,8 @@ spring:
     show-sql: true
   
 app:
+  card-pin:
+    encryption-key: ${CARD_PIN_ENCRYPTION_KEY}
   cors:
     allowed-origin: ${CORS_ALLOWED_ORIGIN}
 

@@ -18,4 +18,13 @@ public class CardController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
                 .body(cardService.getCurrentCard(authentication.getName()));
     }
+
+    @org.springframework.web.bind.annotation.PostMapping("/card/pin")
+    public ResponseEntity<io.github.ayanledeeq1.digitalbanking.dto.cardDto.CardPinResponseDto> revealPin(
+            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody
+            io.github.ayanledeeq1.digitalbanking.dto.cardDto.CardPinRevealRequestDto request,
+            Authentication authentication) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+                .body(cardService.revealPin(authentication.getName(), request.password()));
+    }
 }

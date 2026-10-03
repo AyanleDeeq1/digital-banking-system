@@ -24,6 +24,8 @@ public class Card {
     private String cvc2;
     @Column(nullable = false)
     private LocalDate expiryDate;
+    @Column(name = "pin", nullable = false)
+    private String encryptedPin;
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private  Customer customer;
@@ -33,12 +35,15 @@ public class Card {
 
     protected Card() {}
 
-    public Card(String cardNumber, String cvc2, LocalDate expiryDate, Customer customer, Account account) {
+    public Card(String cardNumber, String cvc2, LocalDate expiryDate, String encryptedPin, Customer customer, Account account) {
         if (cardNumber == null || !cardNumber.matches("[0-9]{16}")) {
             throw new IllegalArgumentException("Card number must contain exactly 16 digits");
         }
         if (cvc2 == null || !cvc2.matches("[0-9]{3}")) {
             throw new IllegalArgumentException("CVC2 must contain exactly 3 digits");
+        }
+        if (encryptedPin == null || !encryptedPin.matches("v1:[A-Za-z0-9+/]{43}=")) {
+            throw new IllegalArgumentException("An encrypted PIN is required");
         }
         this.customer = Objects.requireNonNull(customer, "Customer is required");
         this.account = Objects.requireNonNull(account, "Account is required");
@@ -49,6 +54,7 @@ public class Card {
         this.cardNumber = cardNumber;
         this.cvc2 = cvc2;
         this.expiryDate = Objects.requireNonNull(expiryDate, "Expiry date is required");
+        this.encryptedPin = encryptedPin;
     }
 
     public Long getId() { return id; }
@@ -57,6 +63,8 @@ public class Card {
     public LocalDate getExpiryDate() { return expiryDate; }
     public Customer getCustomer() { return customer; }
     public Account getAccount() { return account; }
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public String getEncryptedPin() { return encryptedPin; }
 
 
 }

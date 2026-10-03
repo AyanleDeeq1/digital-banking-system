@@ -18,10 +18,15 @@ public class CardService {
     private final CardRepository cardRepository;
     private final CustomerRepository customerRepository;
     private final CardDetailsGenerator generator;
-    public CardService(CardRepository cardRepository, CustomerRepository customerRepository, CardDetailsGenerator generator) {
+    private final CardPinCipher pinCipher;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    public CardService(CardRepository cardRepository, CustomerRepository customerRepository, CardDetailsGenerator generator,
+            CardPinCipher pinCipher, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.cardRepository = cardRepository;
         this.customerRepository = customerRepository;
         this.generator = generator;
+        this.pinCipher = pinCipher;
+        this.passwordEncoder = passwordEncoder;
     }
     @Transactional(propagation = Propagation.MANDATORY)
     public void issueCard(Customer customer, Account account) {
@@ -29,7 +34,7 @@ public class CardService {
             for (int attempt = 0; attempt < 10; attempt++) {
                 String number = generator.generateCardNumber();
                 if (!cardRepository.existsByCardNumber(number)) {
-                    Card card = new Card(number, generator.generateCvc2(), generator.expiryDate(), customer, account);
+                    Card card = new Card(number, generator.generateCvc2(), generator.expiryDate(), pinCipher.encrypt(generator.generatePin()), customer, account);
                     cardRepository.saveAndFlush(card);
                     return;
                 }
@@ -40,6 +45,17 @@ public class CardService {
         }
         throw new CardIssuanceException();
     }
+    @Transactional(readOnly = true)
+    public io.github.ayanledeeq1.digitalbanking.dto.cardDto.CardPinResponseDto revealPin(String email, String password) {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+        if (!passwordEncoder.matches(password, customer.getPasswordCredential().getHashedPassword())) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Incorrect application password");
+        }
+        Card card = cardRepository.findByCustomerEmail(email).orElseThrow(CardNotFoundException::new);
+        return new io.github.ayanledeeq1.digitalbanking.dto.cardDto.CardPinResponseDto(pinCipher.decrypt(card.getEncryptedPin()));
+    }
+
     @Transactional(readOnly = true)
     public CardResponseDto getCurrentCard(String email) {
         Customer customer = customerRepository.findByEmail(email)

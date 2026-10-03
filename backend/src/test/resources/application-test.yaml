@@ -11,4 +11,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+app:
+  card-pin:
+    encryption-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+  
   
