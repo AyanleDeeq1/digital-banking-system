@@ -1,0 +1,24 @@
+.transfer-page { min-height: 100vh; display: flex; flex-direction: column; }
+.transfer-body { display: flex; flex: 1; }
+.transfer-main { flex: 1; padding: 40px 56px 64px; min-width: 0; }
+.transfer-back { color: #526981; font-size: 14px; text-decoration: none; }
+.transfer-eyebrow { color: #1677e8; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; margin: 32px 0 8px; }
+.transfer-main h1 { color: #0b2347; font-size: 32px; margin: 0; }
+.transfer-intro { color: #66768c; line-height: 1.6; max-width: 620px; }
+.transfer-panel { max-width: 620px; margin-top: 28px; padding: 32px; background: white; border: 1px solid #e3eaf3; border-radius: 18px; box-shadow: 0 8px 24px rgba(16,60,110,.05); }
+.transfer-modes { display: flex; gap: 6px; background: #eff4fa; padding: 5px; border-radius: 12px; margin-bottom: 28px; }
+.transfer-modes button { flex: 1; padding: 12px; border: 0; border-radius: 9px; background: transparent; font: inherit; font-weight: 600; color: #526981; cursor: pointer; }
+.transfer-modes button[aria-pressed="true"] { color: #0b2347; background: white; box-shadow: 0 2px 8px #102a4310; }
+.transfer-panel fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.transfer-panel label { display: block; margin: 24px 0 9px; color: #102a43; font-size: 14px; font-weight: 600; }
+.transfer-panel input, .transfer-panel select { width: 100%; box-sizing: border-box; padding: 14px; border: 1px solid #d9e2ee; border-radius: 10px; font: inherit; color: #102a43; background: #fff; }
+.transfer-panel input:focus, .transfer-panel select:focus, .transfer-modes button:focus-visible { outline: 2px solid #1677e8; outline-offset: 2px; }
+.transfer-available { padding: 12px 14px; background: #eff6ff; border-radius: 9px; color: #275783; font-size: 14px; }
+.transfer-hint { color: #66768c; font-size: 13px; line-height: 1.5; margin: 8px 0 0; }
+.transfer-success, .transfer-error { padding: 14px 16px; border-radius: 10px; line-height: 1.5; }
+.transfer-success { background: #edf9f1; color: #17623a; border: 1px solid #c4e8d0; }
+.transfer-error { background: #fff1f1; color: #922b2b; border: 1px solid #f1cdcd; }
+.transfer-actions { display: flex; justify-content: flex-end; margin-top: 28px; }
+.transfer-panel :disabled { cursor: not-allowed; opacity: .65; }
+.transfer-session { padding: 48px; }
+@media (max-width: 700px) { .transfer-main { padding: 24px 18px 40px; } .transfer-panel { padding: 20px; } .transfer-actions .button { width: 100%; } }

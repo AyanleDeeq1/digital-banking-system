@@ -9,7 +9,7 @@ import "../style/Account.css";
 import AccountsRow from "../components/AccountsRow.jsx";
 import { formatBalance } from "../utils/formatBalance.js";
 
-function Accounts({ customer }) {
+function Accounts({ customer , logout}) {
     const [accounts, setAccounts] = useState([]);
     const [accountsLoading, setAccountsLoading] = useState(true);
     const [accountsError, setAccountsError] = useState(null);
@@ -55,11 +55,11 @@ function Accounts({ customer }) {
     return (
         <div className="accounts-page">
 
-            <Header page="accounts" customer={customer} />
+            <Header logout={logout} page="accounts" customer={customer} />
 
             <div className="accounts-body">
 
-                <SideBar />
+                <SideBar logout={logout} />
 
                 <main className="accounts-main">
 

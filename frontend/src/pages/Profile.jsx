@@ -4,12 +4,12 @@ import SideBar from "../components/SideBar.jsx";
 import Footer from "../components/Footer.jsx";
 import "../style/Profile.css";
 
-function Profile({ customer, customerStatus }) {
+function Profile({ customer, customerStatus , logout}) {
     return (
         <div className="profile-page">
-            <Header customer={customer} page="profile" />
+            <Header logout={logout} customer={customer} page="profile" />
             <div className="profile-body">
-                <SideBar />
+                <SideBar logout={logout} />
                 <main className="profile-main">
                     <h1>Profile</h1>
                     <p className="profile-intro">Your personal details, all in one place.</p>

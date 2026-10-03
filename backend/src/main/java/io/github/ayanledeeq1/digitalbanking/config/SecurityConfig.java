@@ -57,6 +57,13 @@ public class SecurityConfig {
     public  SecurityFilterChain securityFilterChain(HttpSecurity http, UrlBasedCorsConfigurationSource configurationSource) throws Exception {
 
         http
+            .logout(logout -> logout
+                .logoutUrl("/api/customers/logout")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler((request, response, authentication) -> response.setStatus(204))
+            )
             .securityMatcher("/api/**")
             .csrf(csrf -> csrf
                             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -68,7 +75,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET,  "/api/customers/csrf").permitAll()
             .requestMatchers(HttpMethod.GET,  "/api/customers/me").authenticated()
             .requestMatchers(HttpMethod.GET,  "/api/customers/accounts").authenticated()
-            .requestMatchers(HttpMethod.POST,  "/api/customers", "/api/customers/createAccount").authenticated()
+            .requestMatchers(HttpMethod.POST,  "/api/customers/createAccount").authenticated()
             .anyRequest().authenticated()
             );
         

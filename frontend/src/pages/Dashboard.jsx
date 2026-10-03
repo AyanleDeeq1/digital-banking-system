@@ -7,8 +7,11 @@ import AccountCard from "../components/AccountCard.jsx";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountSummary from '../components/AccountSummary.jsx';
+import deposit from '../assets/deposit.png'
+import transfer from '../assets/transfer.png'
 
-function Dashboard({customer}) {
+
+function Dashboard({customer, logout}) {
     const [accounts, setAccounts] = useState([])
     const [accountsLoading, setAccountsLoading] = useState(true)
     const [accountsError, setAccountsError] = useState(null)
@@ -50,10 +53,10 @@ function Dashboard({customer}) {
     return (
         <div className="dashboard-page">
 
-            <Header page="dashboard" customer={customer} />
+            <Header logout={logout} page="dashboard" customer={customer} />
 
             <div className="dashboard-body">
-                <SideBar />
+                <SideBar logout={logout}/>
 
                 <main className="dashboard-main">
                      <section className="dashboard-heading">
@@ -83,6 +86,31 @@ function Dashboard({customer}) {
                         </div>}
                         <section className="quick-actions">
                             <h2>Quick Actions</h2>
+
+                            <div className="quick-actions-grid">
+                                <button className="quick-action-card" type="button" onClick={() => navigate("/transfer")}>
+                                    <div className="quick-action-icon">
+                                        <img src={transfer} alt="transfer" />
+                                    </div>
+
+                                    <div className="quick-action-content">
+                                        <h3>Transfer Money</h3>
+                                        <p>Send money to another account</p>
+                                    </div>
+                                </button>
+
+                                <button className="quick-action-card" type="button" onClick={() => navigate("/deposit-withdraw")}>
+                                    <div className="quick-action-icon">
+                                        <img src= {deposit} alt="deposit" />
+                                    </div>
+
+                                    <div className="quick-action-content">
+                                        <h3>Deposit / Withdraw</h3>
+                                        <p> Use the URBank ATM</p>
+                                    </div>
+                                </button>
+
+                            </div>
                         </section>
                     </section>
                     

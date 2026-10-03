@@ -3,8 +3,7 @@ import logo from '../assets/logo.png'
 import '../style/Header.css'
 import Button from "./Button.jsx";
 
-function Header({customer, page}) {
-  
+function Header({customer, page, logout}) {
     return (
         <header>
             <div className="header-logo">
@@ -43,8 +42,8 @@ function Header({customer, page}) {
                                 <>
                                     <Link to="/dashboard">Dashboard</Link>
                                     <Link to="/accounts">Accounts</Link>
-                                     <Button variant="logout">
-                                             Logout
+                                     <Button variant="logout" onClick={logout?.submit} disabled={!logout || logout.pending}>
+                                             {logout?.pending ? 'Logging out…' : 'Logout'}
                                      </Button>
                                      
                                 </>
@@ -56,6 +55,7 @@ function Header({customer, page}) {
                             </Link>
                         </>
                     )}
+                {logout?.error && <p role="alert">{logout.error}</p>}
             </nav>
         </header>
     )

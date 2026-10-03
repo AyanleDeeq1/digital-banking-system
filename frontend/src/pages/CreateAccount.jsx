@@ -7,7 +7,7 @@ import Footer from "../components/Footer.jsx";
 import SideBar from "../components/SideBar.jsx";
 import Button from "../components/Button.jsx";
 
-function CreateAccount({csrfToken, customer}) {
+function CreateAccount({csrfToken, customer, logout}) {
     const [success, setSuccess] = useState(false)
     const [accountName, setAccountName] = useState(null)
     const [accountType, setAccountType] = useState("CHECKING");
@@ -60,10 +60,10 @@ function CreateAccount({csrfToken, customer}) {
     }
     return (
         <div className="create-account-page">
-            <Header page="dashboard" customer={customer} />
+            <Header logout={logout} page="dashboard" customer={customer} />
 
             <div className="create-account-body">
-                <SideBar />
+                <SideBar logout={logout} />
 
                 <main className="create-account-main">
 

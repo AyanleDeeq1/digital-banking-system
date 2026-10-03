@@ -4,11 +4,11 @@ import Footer from '../components/Footer.jsx'
 import BankCard from '../components/BankCard.jsx'
 import '../style/Home.css'
 
-function Home({customer}) {
+function Home({customer, logout}) {
   return (
         <div className="home-page">
 
-            <Header page="home" customer={customer} />
+            <Header logout={logout} page="home" customer={customer} />
 
             <main className="home-main">
 

@@ -6,7 +6,7 @@ import "../style/Login.css";
 import Button from "../components/Button.jsx";
 
 
-function Login({csrfToken, customer, setCustomer}) {
+function Login({csrfToken, customer, setCustomer, logout}) {
     const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -40,7 +40,7 @@ function Login({csrfToken, customer, setCustomer}) {
     return (
         <div className="login-page">
 
-                <Header page="login" customer={customer} />
+                <Header logout={logout} page="login" customer={customer} />
 
                 <main className="login-main">
 

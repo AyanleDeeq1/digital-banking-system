@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import "../style/SideBar.css";
 
-function SideBar() {
+
+function SideBar({logout}) {
     return (
         <aside className="sidebar">
 
@@ -24,9 +25,10 @@ function SideBar() {
 
             </nav>
               <div className="sidebar-bottom">
-                <button className="sidebar-logout">
-                    Logout
+                <button className="sidebar-logout" type="button" onClick={logout?.submit} disabled={!logout || logout.pending}>
+                    {logout?.pending ? 'Logging out…' : 'Logout'}
                 </button>
+                {logout?.error && <p role="alert">{logout.error}</p>}
             </div>
 
         </aside>
