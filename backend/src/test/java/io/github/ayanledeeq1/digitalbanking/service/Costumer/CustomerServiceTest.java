@@ -56,7 +56,7 @@ public class CustomerServiceTest {
         RegisterCustomerDto regsiterDto = new RegisterCustomerDto("aye", "Deeq", "aye@gmail.com", "aye");
 
 
-        when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(customerRepository.saveAndFlush(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(passwordEncoder.encode("aye")).thenReturn("hashedPassword");
         when(accountService.generateAccountNumber()).thenReturn("123456767");
         

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +43,11 @@ public class AuthIntegrationTest {
                         "firstName": "aye",
                         "lastName": "deeq",
                         "email": "aye@gmail.com",
-                        "password": "Aye"
+                        "password": "ValidPass1!"
                     }
                 """)
         )
-        .andDo(print())
+        
         .andExpect(status().isCreated());
     }
 
@@ -59,11 +59,11 @@ public class AuthIntegrationTest {
                       .content("""
                                 {
                                     "email": "aye@gmail.com",
-                                    "password": "Aye"
+                                    "password": "ValidPass1!"
                                 }
                               """)
             )
-            .andDo(print())
+            
             .andExpect(status().isOk())
             .andReturn();
 

@@ -49,6 +49,9 @@ public class CustomerService {
 
     @Transactional 
     public CustomerRegisterResponseDto saveCustomer(RegisterCustomerDto requestdDto) {
+        if (customerRepository.findByEmail(requestdDto.getEmail()).isPresent()) {
+            throw new io.github.ayanledeeq1.digitalbanking.exception.DuplicateEmailException();
+        }
         // hash password
         String hashedPassword = passwordEncoder.encode(requestdDto.getPassword());
         // create password object
@@ -65,7 +68,20 @@ public class CustomerService {
 
         customer.addAccount(newAccount);
 
-        Customer savedcustomer = customerRepository.save(customer); //persiste the customer and passowrd credentail
+        Customer savedcustomer;
+        try {
+            savedcustomer = customerRepository.saveAndFlush(customer);
+        } catch (org.springframework.dao.DataIntegrityViolationException exception) {
+            // A concurrent registration may pass the lookup. The database remains
+            // the authority for uniqueness; never return its error or rejected value.
+            if (exception.getCause() instanceof org.hibernate.exception.ConstraintViolationException constraint
+                    && constraint.getErrorCode() == 1062
+                    && constraint.getSQL() != null
+                    && constraint.getSQL().startsWith("insert into customer ")) {
+                throw new io.github.ayanledeeq1.digitalbanking.exception.DuplicateEmailException();
+            }
+            throw exception;
+        }
         accountService.saveAccount(newAccount);
         cardService.issueCard(savedcustomer, newAccount);
 

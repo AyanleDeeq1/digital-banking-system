@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
@@ -47,11 +47,11 @@ public class customerIntegrationTest {
                                 "firstName": "aye",
                                 "lastName": "deeq",
                                 "email": "aye@gmail.com",
-                                "password": "Aye"
+                                "password": "ValidPass1!"
                             }
                          """)
             )
-            .andDo(print())
+            
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.firstName").value("aye"))
             .andExpect(jsonPath("$.email").value("aye@gmail.com"));
