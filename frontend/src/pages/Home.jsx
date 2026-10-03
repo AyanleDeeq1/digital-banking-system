@@ -6,7 +6,7 @@ import '../style/Home.css'
 
 function Home({customer, logout}) {
   return (
-        <div className="home-page">
+        <div className={`home-page${customer ? ' home-authenticated' : ''}`}>
 
             <Header logout={logout} page="home" customer={customer} />
 
@@ -27,6 +27,7 @@ function Home({customer, logout}) {
                           </p>
                 </section>
 
+                <div className="home-card-visual">
                 <BankCard
                     firstName="John"
                     lastName="Doe"
@@ -35,6 +36,7 @@ function Home({customer, logout}) {
                     cvc2="123"
                     type="Debit"
                 />
+                </div>
 
             </main>
 
