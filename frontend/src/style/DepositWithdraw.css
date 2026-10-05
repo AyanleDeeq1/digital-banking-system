@@ -16,7 +16,12 @@
 .atm-card-inserted { transform: translate(var(--travel-x), var(--travel-y)) rotate(90deg) scale(.035); opacity: 0; pointer-events: none; }
 .atm-card-caption, .atm-simulation { color: #66768c; font-size: 14px; line-height: 1.6; }
 .atm-simulation { padding: 12px 16px; border-radius: 10px; background: #eaf3ff; color: #275783; }
-.atm-machine-window { width: 100%; aspect-ratio: .72; overflow: hidden; border-radius: 20px; }
+.atm-machine-window {
+    width: min(100%, 400px, calc((100svh - 96px) * 3360 / 7471));
+    min-width: 0;
+    margin: 24px auto;
+    border-radius: 20px;
+}
 .atm-machine { position: relative; container-type: inline-size; width: 100%; }
 .atm-image { display: block; width: 100%; height: auto; }
 .atm-card-slot { position: absolute; left: 71%; top: 45%; width: 16%; height: 2.3%; }
