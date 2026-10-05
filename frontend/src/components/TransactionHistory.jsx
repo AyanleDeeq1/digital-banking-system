@@ -24,7 +24,7 @@ function TransactionHistory({ accountId, accountName, recent = false }) {
         async function load() {
             try {
                 const path = recent ? '/transactions/recent' : `/accounts/${accountId}/transactions`;
-                const response = await fetch(`http://localhost:8080/api/customers${path}`, {
+                const response = await fetch(`/api/customers${path}`, {
                     credentials: 'include', signal: controller.signal,
                 });
                 if (!response.ok) {

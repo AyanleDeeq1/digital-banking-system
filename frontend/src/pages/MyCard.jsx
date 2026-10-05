@@ -69,11 +69,11 @@ function MyCard({ customer , logout}) {
         const password = pinPassword;
         setPinPassword(''); setRevealedPin('');
         try {
-            const tokenResponse = await fetch('http://localhost:8080/api/customers/csrf', { credentials: 'include' });
+            const tokenResponse = await fetch('/api/customers/csrf', { credentials: 'include' });
             if (!tokenResponse.ok) throw new Error('Unable to verify your security session. Please reload.');
             const csrf = await tokenResponse.json();
             if (!csrf.token || !csrf.headerName) throw new Error('Unable to verify your security session. Please reload.');
-            const response = await fetch('http://localhost:8080/api/customers/card/pin', {
+            const response = await fetch('/api/customers/card/pin', {
                 method: 'POST', credentials: 'include', cache: 'no-store',
                 headers: { 'Content-Type': 'application/json', [csrf.headerName]: csrf.token },
                 body: JSON.stringify({ password }),
