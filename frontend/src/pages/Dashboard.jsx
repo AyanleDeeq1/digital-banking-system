@@ -22,7 +22,7 @@ function Dashboard({customer, logout}) {
     useEffect(() => {
         async function getAccounts() {
             try {
-                const request = await fetch("http://localhost:8080/api/customers/accounts", {
+                const request = await fetch("/api/customers/accounts", {
                     method: 'GET',
                     credentials: 'include'
                 })

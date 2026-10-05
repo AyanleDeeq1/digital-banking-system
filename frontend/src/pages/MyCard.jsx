@@ -19,7 +19,7 @@ function MyCard({ customer , logout}) {
         async function loadCard() {
             setResult({ state: "loading" });
             try {
-                const response = await fetch("http://localhost:8080/api/customers/card", {
+                const response = await fetch("/api/customers/card", {
                     credentials: "include",
                     cache: "no-store",
                     signal: controller.signal,

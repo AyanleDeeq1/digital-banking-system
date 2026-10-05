@@ -20,7 +20,7 @@ function Login({csrfToken, customer, setCustomer, logout}) {
         }
 
 
-        const req = await fetch('http://localhost:8080/api/customers/login', {
+        const req = await fetch('/api/customers/login', {
             method: 'POST',
             credentials: 'include',
             headers: {

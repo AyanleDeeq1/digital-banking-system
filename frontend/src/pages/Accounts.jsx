@@ -20,7 +20,7 @@ function Accounts({ customer , logout}) {
         async function getAccounts() {
             try {
                 const request = await fetch(
-                "http://localhost:8080/api/customers/accounts",
+                "/api/customers/accounts",
                 {
                     method: "GET",
                     credentials: "include"

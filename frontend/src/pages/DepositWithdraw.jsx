@@ -8,7 +8,7 @@ import { formatBalance } from '../utils/formatBalance.js';
 import machine from '../assets/atm.jpg';
 import '../style/DepositWithdraw.css';
 
-const api = 'http://localhost:8080/api/customers';
+const api = '/api/customers';
 async function readResponse(response) {
     if (response.status === 204) return null;
     const data = await response.json().catch(() => null);

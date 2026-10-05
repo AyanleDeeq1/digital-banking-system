@@ -1,0 +1,7 @@
+target/
+secrets.yaml
+AGENTS.md
+.git/
+.gitignore
+Dockerfile
+.dockerignore

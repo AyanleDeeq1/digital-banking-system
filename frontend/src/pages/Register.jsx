@@ -63,7 +63,7 @@ function Register({ csrfToken, customer, logout}) {
         }
 
         try {
-        const request = await fetch('http://localhost:8080/api/customers', {
+        const request = await fetch('/api/customers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -18,7 +18,7 @@ function App() {
   const [customerStatus, setCustomerStatus] = useState("loading");
   useEffect(() => {
     async function getCsrfToken() {
-      const request = await fetch("http://localhost:8080/api/customers/csrf", {
+      const request = await fetch("/api/customers/csrf", {
         method: "GET",
         credentials: "include"
       });
@@ -30,7 +30,7 @@ function App() {
 
     async function getCurrentCustomer() {
       try {
-      const request = await fetch("http://localhost:8080/api/customers/me", {
+      const request = await fetch("/api/customers/me", {
         method: "GET",
         credentials: "include"
       });
@@ -58,7 +58,7 @@ function App() {
   const [logoutError, setLogoutError] = useState('');
 
   async function fetchCsrf() {
-    const response = await fetch('http://localhost:8080/api/customers/csrf', { credentials: 'include' });
+    const response = await fetch('/api/customers/csrf', { credentials: 'include' });
     if (!response.ok) throw new Error('Unable to verify your security session. Please reload and try again.');
     const token = await response.json();
     if (!token.token || !token.headerName) throw new Error('Unable to verify your security session. Please reload and try again.');
@@ -71,7 +71,7 @@ function App() {
     setLogoutPending(true); setLogoutError('');
     try {
       const csrf = await fetchCsrf();
-      const response = await fetch('http://localhost:8080/api/customers/logout', {
+      const response = await fetch('/api/customers/logout', {
         method: 'POST', credentials: 'include',
         headers: { [csrf.headerName]: csrf.token },
       });

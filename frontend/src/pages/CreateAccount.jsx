@@ -15,7 +15,7 @@ function CreateAccount({csrfToken, customer, logout}) {
 
     async function  createNewAccount(event) {
             event.preventDefault();
-        const request = await fetch("http://localhost:8080/api/customers/createAccount", {
+        const request = await fetch("/api/customers/createAccount", {
             method: "POST",
             credentials: "include",
             headers: {

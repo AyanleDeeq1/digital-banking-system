@@ -2,11 +2,13 @@
 
 The domain model represents the current core concepts of the Digital Banking System and their relationships.
 
+![Database Diagram](../images/domain-model.png)
+
+
 ```mermaid
 classDiagram
     Customer "1" -- "1..*" Account
     Customer "1" *-- "1" PasswordCredential
-    Customer "1" -- "0..1" Card
     Account "1" -- "0..1" Card
     Account "1" -- "0..*" LedgerEntry
     Transaction "1" -- "0..*" LedgerEntry

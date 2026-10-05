@@ -7,7 +7,7 @@ import Button from '../components/Button.jsx';
 import { formatBalance } from '../utils/formatBalance.js';
 import '../style/Transfer.css';
 
-const api = 'http://localhost:8080/api/customers';
+const api = '/api/customers';
 const accountDigits = account => account?.accountNumber?.split(',')[1] ?? '';
 const accountLabel = account => `${account.name} · ${account.type === 'SAVINGS' ? 'Savings' : 'Checking'} · •••• ${accountDigits(account).slice(-4)}`;
 

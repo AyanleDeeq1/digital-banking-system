@@ -1,20 +1,7 @@
 spring:
-  config:
-    import: "optional:file:./secrets.yaml"
   application:
     name: digital-banking-system
-  datasource: 
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-  
-  
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  
+ 
 app:
   card-pin:
     encryption-key: ${CARD_PIN_ENCRYPTION_KEY}
