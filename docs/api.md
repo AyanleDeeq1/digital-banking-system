@@ -236,6 +236,9 @@ The backend generates the account number and creates the account with
 `ACTIVE` status. The response includes a calculated balance of zero because the
 new account has no ledger entries.
 
+No debit card is issued for an additional account; the customer retains the
+registration-issued card linked to the Main Account.
+
 #### Request
 
 `POST /api/customers/createAccount`
@@ -278,6 +281,10 @@ Supported account types are:
 `GET /api/customers/card` requires the authenticated session cookie. The server
 identifies the customer from the session; no customer or account ID is accepted
 for selecting a card. Successful responses use `Cache-Control: no-store`.
+
+The card detail, PIN reveal, and ATM PIN endpoints use the single registration-issued
+card linked to the Main Account. Ownership is resolved through
+Card -> Account -> Customer; response shapes and authentication remain unchanged.
 
 **Status:** `200 OK`
 

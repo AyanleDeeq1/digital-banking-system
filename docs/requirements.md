@@ -12,10 +12,12 @@
 
 - New registration issues one debit card for the registration-created Main Account.
 - Registration, credentials, account, and card creation succeed or roll back together.
-- Additional account creation does not issue another card; existing customers are not backfilled.
+- Each new customer receives only one debit card, linked to the Main Account created at registration. Additional accounts do not receive cards.
+- A card belongs only to its account; customer ownership is resolved through that account.
+- Existing accounts without cards are not automatically backfilled.
 - Card numbers contain 16 random digits and are unique; CVC2 contains three random digits and is not unique.
 - Leading zeros are preserved. Expiry is three calendar years from issuance in Europe/Stockholm.
-- An authenticated customer can view only their own card, including the full card number on My Card.
+- An authenticated customer can view only their registration-issued card, including the full card number on My Card.
 - The My Card sidebar page reuses the existing card design with real API data; Home keeps its sample card.
 - Credit cards, card payments, and card management operations remain outside this feature.
 

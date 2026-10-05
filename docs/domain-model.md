@@ -16,10 +16,17 @@ classDiagram
 
 ### Debit Card
 
-New registration creates one debit card linked directly to the newly created
-Main Account and its customer. Existing customers can have no card. Opening
-additional accounts does not issue cards. A card's account must belong to its
-customer. Credit cards and card payments are not implemented.
+Registration atomically creates one debit card linked to the new Main Account.
+Additional accounts do not receive cards. A card has only an Account relationship;
+its customer is accessed through Card -> Account -> Customer. There is no direct
+customer foreign key. Issuing only during registration preserves one card per
+customer in application flows; the database enforces at most one card per account.
+Existing accounts without cards are not automatically backfilled. Credit cards
+and card payments are not implemented.
+
+The existing card detail, PIN reveal, and ATM PIN endpoints use the registration
+card through its account. All ownership
+checks follow the account's customer; ATM operations still allow other owned accounts.
 
 Card details are simulated: a unique 16-digit string number, a non-unique
 3-digit string CVC2, and an expiry date three calendar years after issuance

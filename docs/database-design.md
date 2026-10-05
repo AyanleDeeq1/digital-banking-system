@@ -18,12 +18,15 @@ The `card` table supplements the diagram above:
 - `card_number`: required unique `VARCHAR(16)`
 - `cvc2`: required `VARCHAR(3)`, not unique
 - `expiry_date`: required `DATE`
-- `customer_id`: required unique foreign key to `customer`
 - `account_id`: required unique foreign key to `account`
+- `pin`: required `VARCHAR(255)` holding the encrypted PIN envelope
 
-Each card belongs to one customer and that customer's registration-created
-Main Account. Existing customers/accounts can have no card. Registration saves
-customer, credentials, account, and card in one transaction. Number generation
+Each card belongs directly to one account. Customer ownership is obtained through
+the account; `card` has no `customer_id` column. The unique account foreign key
+allows at most one card per account. The application issues one card per customer
+only at registration, linked to the Main Account. Registration saves customer,
+credentials, account, and card in one transaction; additional accounts receive no card.
+Legacy accounts without cards are not automatically backfilled. Number generation
 tries at most ten candidates when known collisions occur. A concurrent database
 uniqueness failure aborts registration; it is not retried in the failed transaction.
 These are simulated card details, stored as strings without a production card
@@ -57,8 +60,13 @@ Account balances are computed using `SUM(amount)`, with no rows interpreted as
 zero. Grouped queries calculate balances for several account IDs together.
 An aggregate balance is not restricted to the precision of an individual entry.
 
-Schema management remains Hibernate `ddl-auto: update` for the application and
-`create-drop` for tests. No migration strategy has been introduced. Transfers use the existing persistence model without schema changes.
+Flyway `db/migration/V1__initial_schema.sql` creates all six entity tables from an
+empty MySQL 8.4 database. It uses BIGINT AUTO_INCREMENT IDs, native ENUM columns,
+DECIMAL(19,2) amounts, DATETIME(6) transaction time, and InnoDB foreign keys.
+Hibernate uses `validate` in the local profile, `update` in production, and
+`create-drop` in tests. Deployment configuration is unchanged. V1 is an initial
+schema, not an upgrade script for existing databases; already-applied migrations
+must not be rewritten in a deployed environment.
 
 ## Transfer Persistence and Concurrency
 
@@ -75,7 +83,7 @@ existing generator and unique full account number. No suffix or fuzzy lookup is 
 
 The existing `card.pin` column now contains a versioned `v1:` Base64 envelope with
 12-byte nonce and authenticated AES-256-GCM ciphertext; plaintext PINs are never saved
-by new card issuance. No new card relationship or balance column is added.
+by new card issuance. Cards reference only accounts, and no balance column is added.
 `CardPinMigration` transactionally encrypts legacy four-digit values at startup without
 changing their PINs, leaves encrypted values unchanged, and verifies the configured key
 can decrypt existing values. Startup fails for malformed data or the wrong key.
