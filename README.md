@@ -4,6 +4,16 @@ URBank is a simulated digital banking application with a React frontend and a Sp
 
 Amounts are denominated in SEK. Debit card details and ATM cash operations are simulated; the application does not connect to payment networks or external banks.
 
+## Live Demo
+
+URBank is deployed and available to try online.
+
+[Try the Digital Banking System](http://2.29.57.220/)
+
+<!-- Replace YOUR-LIVE-URL with the public production URL before publishing. -->
+
+> Note: The application works on both desktop and mobile, but it is currently optimized primarily for desktop. Mobile responsiveness is still being improved.
+
 ![URBank homepage](images/banking-home.png)
 
 ## Functionality
