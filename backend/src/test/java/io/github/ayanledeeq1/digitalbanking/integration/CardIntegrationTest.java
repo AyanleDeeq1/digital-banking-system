@@ -45,22 +45,23 @@ class CardIntegrationTest {
     private void register(String email) {
         customers.saveCustomer(new RegisterCustomerDto("Card", "Owner", email, "test-password"));
     }
-    @Test void registrationCreatesOneCardForInitialAccountOnly() {
+    @Test void registrationCreatesOneCardAndAdditionalAccountsHaveNoCard() {
         register("card@example.com");
         Customer customer = customerRepository.findByEmail("card@example.com").orElseThrow();
         Long initialAccount = customer.getAccounts().getFirst().getId();
-        customers.createAnotherAccount(new AccountCreateDto("Extra checking", AccountType.CHECKING), customer.getEmail());
+        var extra = customers.createAnotherAccount(new AccountCreateDto("Extra checking", AccountType.CHECKING), customer.getEmail());
         em.flush();
         em.clear();
-        Card card = cards.findByCustomerEmail("card@example.com").orElseThrow();
+        Card card = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("card@example.com").orElseThrow();
         assertEquals(1, cards.count());
-        assertEquals(customer.getId(), card.getCustomer().getId());
+        assertEquals(customer.getId(), card.getAccount().getCustomer().getId());
         assertEquals(initialAccount, card.getAccount().getId());
         assertEquals("0000000000000001", card.getCardNumber());
         assertEquals("007", card.getCvc2());
         assertNotEquals("0123", card.getEncryptedPin());
         assertTrue(pinCipher.matches("0123", card.getEncryptedPin()));
         assertEquals(LocalDate.of(2029, 10, 1), card.getExpiryDate());
+        assertTrue(cards.findByAccountId(extra.getId()).isEmpty());
     }
     @Test void endpointReturnsOnlyOwnFullCardAndPreservesLeadingZeros() throws Exception {
         register("first@example.com");
@@ -85,6 +86,18 @@ class CardIntegrationTest {
                 .andExpect(jsonPath("$.cardNumber").value("0000000000000002"));
         assertEquals(2, cards.count()); // Same CVC2 is valid on different cards.
     }
+    @Test void endpointKeepsRegistrationCardAfterAdditionalAccountCreation() throws Exception {
+        register("multiple-cards@example.com");
+        var extra = customers.createAnotherAccount(new AccountCreateDto("Extra", AccountType.SAVINGS), "multiple-cards@example.com");
+        em.flush();
+        em.clear();
+        mvc.perform(get("/api/customers/card").with(user("multiple-cards@example.com"))
+                .param("accountId", extra.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cardNumber").value("0000000000000001"));
+        assertTrue(cards.findByAccountId(extra.getId()).isEmpty());
+        assertEquals(1, cards.count());
+    }
     @Test void missingCardUsesExistingErrorShape() throws Exception {
         customerRepository.save(new Customer("Old", "Customer", "old@example.com", new PasswordCredential("hash")));
         mvc.perform(get("/api/customers/card").with(user("old@example.com")))
@@ -95,24 +108,22 @@ class CardIntegrationTest {
     @Test void unauthenticatedAccessIsRejected() throws Exception {
         mvc.perform(get("/api/customers/card")).andExpect(status().isForbidden());
     }
-    private Card extraCard(String number, Customer customer, Account account) {
-        return new Card(number, "007", LocalDate.of(2029, 10, 1), pinCipher.encrypt("0123"), customer, account);
+    private Card extraCard(String number, Account account) {
+        return new Card(number, "007", LocalDate.of(2029, 10, 1), pinCipher.encrypt("0123"), account);
     }
     @Test void databaseRejectsDuplicateCardNumber() {
         register("first@example.com");
         register("second@example.com");
-        Card second = cards.findByCustomerEmail("second@example.com").orElseThrow();
+        Card second = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("second@example.com").orElseThrow();
         cards.delete(second);
         cards.flush();
         assertThrows(DataIntegrityViolationException.class, () ->
-                cards.saveAndFlush(extraCard("0000000000000001", second.getCustomer(), second.getAccount())));
+                cards.saveAndFlush(extraCard("0000000000000001", second.getAccount())));
     }
-    @Test void databaseRejectsSecondCardForCustomer() {
+    @Test void databaseRejectsSecondCardForSameAccount() {
         register("first@example.com");
-        Card first = cards.findByCustomerEmail("first@example.com").orElseThrow();
-        var extra = customers.createAnotherAccount(new AccountCreateDto("Extra", AccountType.SAVINGS), "first@example.com");
-        Account account = accounts.findById(extra.getId()).orElseThrow();
+        Card first = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("first@example.com").orElseThrow();
         assertThrows(DataIntegrityViolationException.class, () ->
-                cards.saveAndFlush(extraCard("0000000000000003", first.getCustomer(), account)));
+                cards.saveAndFlush(extraCard("0000000000000003", first.getAccount())));
     }
 }

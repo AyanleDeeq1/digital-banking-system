@@ -83,7 +83,7 @@ public class CustomerService {
             throw exception;
         }
         accountService.saveAccount(newAccount);
-        cardService.issueCard(savedcustomer, newAccount);
+        cardService.issueCard(newAccount);
 
         // creeate response dto object
         CustomerRegisterResponseDto responseDto = new CustomerRegisterResponseDto(

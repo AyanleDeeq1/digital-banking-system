@@ -51,7 +51,7 @@ class AtmIntegrationTest {
             owner = customer(); account = account(owner, AccountStatus.ACTIVE);
             foreign = account(customer(), AccountStatus.ACTIVE);
             card = cards.saveAndFlush(new Card(String.format("%016d", account.getId()), "007",
-                    LocalDate.now().plusYears(3), cipher.encrypt("0123"), owner, account));
+                    LocalDate.now().plusYears(3), cipher.encrypt("0123"), account));
         });
     }
     private Customer customer() {
@@ -88,6 +88,17 @@ class AtmIntegrationTest {
         mvc.perform(get("/api/customers/card").with(user(owner.getEmail())))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.pin").doesNotExist())
                 .andExpect(jsonPath("$.encryptedPin").doesNotExist());
+    }
+    @Test void registrationCardAllowsAccessToAdditionalOwnedAccountWithoutCard() throws Exception {
+        Account extra = new TransactionTemplate(manager).execute(status -> account(owner, AccountStatus.ACTIVE));
+        assertTrue(cards.findByAccountId(extra.getId()).isEmpty());
+        mvc.perform(post("/api/customers/atm/pin").with(user(owner.getEmail())).with(csrf())
+                .contentType(MediaType.APPLICATION_JSON).content("{\"pin\":\"9876\"}"))
+                .andExpect(status().isUnauthorized());
+        MockHttpSession session = verified();
+        attempt(session, extra.getId(), "deposits", "10", 201);
+        assertEquals(0, balances.getBalance(extra.getId()).compareTo(new BigDecimal("10")));
+        balance("0");
     }
     @Test void wrongPinRevokesVerificationAndEjectRequiresVerificationAgain() throws Exception {
         MockHttpSession session = verified();
@@ -179,5 +190,24 @@ class AtmIntegrationTest {
             assertNotEquals(first.get(30, TimeUnit.SECONDS), second.get(30, TimeUnit.SECONDS));
         }
         balance("20"); assertEquals(2, transactions.count()); assertEquals(2, ledger.count());
+    }
+    @Test void verifiedCardCannotBeBorrowedByAnotherCustomerWithOwnCard() throws Exception {
+        MockHttpSession session = verified();
+        Card foreignCard = new TransactionTemplate(manager).execute(status -> cards.saveAndFlush(
+                new Card(String.format("%016d", foreign.getId()), "007", LocalDate.now().plusYears(3), cipher.encrypt("9876"), foreign)));
+        try {
+            mvc.perform(post("/api/customers/atm/accounts/{id}/deposits", foreign.getId()).session(session)
+                    .with(user(foreign.getCustomer().getEmail())).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"amount\":1}"))
+                    .andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.massage").value("Insert your card and verify your PIN first"));
+            assertEquals(0, ledger.count());
+            assertEquals(0, transactions.count());
+        } finally {
+            new TransactionTemplate(manager).executeWithoutResult(status -> {
+                cards.deleteById(foreignCard.getId());
+                cards.flush();
+            });
+        }
     }
 }

@@ -31,7 +31,11 @@ class CardPinIntegrationTest {
     @Test void revealsOnlyOwnersGeneratedPinAfterPasswordVerification() throws Exception {
         customers.saveCustomer(new RegisterCustomerDto("PIN", "Owner", "pin-owner@example.com", "ValidPass1!"));
         customers.saveCustomer(new RegisterCustomerDto("Other", "Owner", "pin-other@example.com", "OtherPass1!"));
-        String stored = cards.findByCustomerEmail("pin-owner@example.com").orElseThrow().getEncryptedPin();
+        String stored = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("pin-owner@example.com").orElseThrow().getEncryptedPin();
+        var extra = customers.createAnotherAccount(new io.github.ayanledeeq1.digitalbanking.dto.accountDto.AccountCreateDto(
+                "Extra", io.github.ayanledeeq1.digitalbanking.enums.AccountType.SAVINGS), "pin-owner@example.com");
+        assertTrue(cards.findByAccountId(extra.getId()).isEmpty());
+        assertEquals(stored, cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("pin-owner@example.com").orElseThrow().getEncryptedPin());
         mvc.perform(post("/api/customers/card/pin").with(user("pin-owner@example.com")).with(csrf())
                 .param("customerId", "999").contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"ValidPass1!\"}"))
                 .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
@@ -49,7 +53,7 @@ class CardPinIntegrationTest {
     }
     @Test void migrationEncryptsExistingPinsOnceWithoutChangingTheirValues() {
         customers.saveCustomer(new RegisterCustomerDto("Legacy", "Card", "legacy-pin@example.com", "ValidPass1!"));
-        Long id = cards.findByCustomerEmail("legacy-pin@example.com").orElseThrow().getId();
+        Long id = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc("legacy-pin@example.com").orElseThrow().getId();
         jdbc.update("update card set pin = ? where id = ?", "0007", id);
         migration.run(null);
         String first = jdbc.queryForObject("select pin from card where id = ?", String.class, id);

@@ -74,7 +74,7 @@ public class CustomerServiceTest {
 
         assertEquals("123456767", captureAccount.getAccountNumber());
         assertEquals(AccountStatus.ACTIVE, captureAccount.getStatus());
-        verify(cardService).issueCard(captureAccount.getCustomer(), captureAccount);
+        verify(cardService).issueCard(captureAccount);
     }
 
     @Test

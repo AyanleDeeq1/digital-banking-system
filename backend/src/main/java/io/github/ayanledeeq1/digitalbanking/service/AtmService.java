@@ -33,7 +33,7 @@ public class AtmService {
 
     @Transactional(readOnly = true)
     public Long verifyPin(String email, String pin) {
-        Card card = cards.findByCustomerEmail(email).orElseThrow(CardNotFoundException::new);
+        Card card = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc(email).orElseThrow(CardNotFoundException::new);
         if (!cipher.matches(pin, card.getEncryptedPin())) {
             throw new AtmException(INCORRECT_PIN, "Incorrect PIN. Please try again");
         }
@@ -56,7 +56,7 @@ public class AtmService {
 
     private TransactionResponseDto move(String email, Long verifiedCardId, Long accountId, BigDecimal requested,
             TransactionType type) {
-        Card card = cards.findByCustomerEmail(email).orElseThrow(CardNotFoundException::new);
+        Card card = cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc(email).orElseThrow(CardNotFoundException::new);
         if (verifiedCardId == null || !verifiedCardId.equals(card.getId())) {
             throw new AtmException(PIN_REQUIRED, "Insert your card and verify your PIN first");
         }
@@ -73,7 +73,7 @@ public class AtmService {
         } catch (DataAccessException failure) {
             throw new AtmException(UNAVAILABLE, "Account is busy. Please try again shortly");
         }
-        if (!account.getCustomer().getId().equals(card.getCustomer().getId())) {
+        if (!account.getCustomer().getId().equals(card.getAccount().getCustomer().getId())) {
             throw new AtmException(NOT_OWNER, "Account does not belong to you");
         }
         if (account.getStatus() != AccountStatus.ACTIVE) {

@@ -38,7 +38,7 @@ class CardServiceTest {
         when(generator.generatePin()).thenReturn("0123");
         when(pinCipher.encrypt("0123")).thenReturn("v1:" + "A".repeat(43) + "=");
         when(generator.expiryDate()).thenReturn(LocalDate.of(2029, 10, 1));
-        service.issueCard(customer, account);
+        service.issueCard(account);
         ArgumentCaptor<Card> card = ArgumentCaptor.forClass(Card.class);
         verify(repository).saveAndFlush(card.capture());
         assertEquals("0000000000000002", card.getValue().getCardNumber());
@@ -46,12 +46,12 @@ class CardServiceTest {
         assertEquals("v1:" + "A".repeat(43) + "=", card.getValue().getEncryptedPin());
         verify(pinCipher).encrypt("0123");
         assertSame(account, card.getValue().getAccount());
-        assertSame(customer, card.getValue().getCustomer());
+        assertSame(customer, card.getValue().getAccount().getCustomer());
     }
     @Test void stopsAfterTenCollisions() {
         when(generator.generateCardNumber()).thenReturn("0000000000000001");
         when(repository.existsByCardNumber(anyString())).thenReturn(true);
-        assertThrows(CardIssuanceException.class, () -> service.issueCard(customer, account));
+        assertThrows(CardIssuanceException.class, () -> service.issueCard(account));
         verify(generator, times(10)).generateCardNumber();
         verify(repository, never()).saveAndFlush(any());
     }
@@ -62,25 +62,25 @@ class CardServiceTest {
         when(pinCipher.encrypt("0123")).thenReturn("v1:" + "A".repeat(43) + "=");
         when(generator.expiryDate()).thenReturn(LocalDate.of(2029, 10, 1));
         when(repository.saveAndFlush(any())).thenThrow(new DataIntegrityViolationException("sensitive database detail"));
-        CardIssuanceException failure = assertThrows(CardIssuanceException.class, () -> service.issueCard(customer, account));
+        CardIssuanceException failure = assertThrows(CardIssuanceException.class, () -> service.issueCard(account));
         assertFalse(failure.getMessage().contains("sensitive"));
         assertNull(failure.getCause());
         verify(generator).generateCardNumber();
     }
-    @Test void cardRejectsMismatchedOwnerAndInvalidIdentifiers() {
-        Customer other = new Customer("Other", "Owner", "other@example.com", new PasswordCredential("hash"));
-        ReflectionTestUtils.setField(other, "id", 2L);
+    @Test void cardRequiresOwnedAccountAndValidIdentifiers() {
         LocalDate expiry = LocalDate.of(2029, 10, 1);
         String encryptedPin = "v1:" + "A".repeat(43) + "=";
-        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007", expiry, encryptedPin, other, account));
-        assertThrows(IllegalArgumentException.class, () -> new Card("123", "007", expiry, encryptedPin, customer, account));
-        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "7", expiry, encryptedPin, customer, account));
+        Account unowned = new Account("Unowned", "3424-5,0000000000", AccountType.CHECKING, AccountStatus.ACTIVE);
+        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007", expiry, encryptedPin, unowned));
+        assertThrows(NullPointerException.class, () -> new Card("0000000000000001", "007", expiry, encryptedPin, null));
+        assertThrows(IllegalArgumentException.class, () -> new Card("123", "007", expiry, encryptedPin, account));
+        assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "7", expiry, encryptedPin, account));
     }
 
     @Test void cardRejectsMissingOrMalformedPin() {
         for (String pin : new String[] {null, "", "0123", "123", "12345", "abcd"}) {
             assertThrows(IllegalArgumentException.class, () -> new Card("0000000000000001", "007",
-                    LocalDate.of(2029, 10, 1), pin, customer, account));
+                    LocalDate.of(2029, 10, 1), pin, account));
         }
     }
 }

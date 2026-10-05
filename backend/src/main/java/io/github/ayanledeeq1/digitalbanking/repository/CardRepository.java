@@ -6,6 +6,7 @@ import io.github.ayanledeeq1.digitalbanking.model.Card;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     boolean existsByCardNumber(String cardNumber);
-    @EntityGraph(attributePaths = "customer")
-    Optional<Card> findByCustomerEmail(String email);
+    @EntityGraph(attributePaths = {"account", "account.customer"})
+    Optional<Card> findFirstByAccountCustomerEmailOrderByAccountIdAsc(String email);
+    Optional<Card> findByAccountId(Long accountId);
 }

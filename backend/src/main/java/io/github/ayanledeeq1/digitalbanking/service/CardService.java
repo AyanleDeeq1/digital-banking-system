@@ -29,12 +29,12 @@ public class CardService {
         this.passwordEncoder = passwordEncoder;
     }
     @Transactional(propagation = Propagation.MANDATORY)
-    public void issueCard(Customer customer, Account account) {
+    public void issueCard(Account account) {
         try {
             for (int attempt = 0; attempt < 10; attempt++) {
                 String number = generator.generateCardNumber();
                 if (!cardRepository.existsByCardNumber(number)) {
-                    Card card = new Card(number, generator.generateCvc2(), generator.expiryDate(), pinCipher.encrypt(generator.generatePin()), customer, account);
+                    Card card = new Card(number, generator.generateCvc2(), generator.expiryDate(), pinCipher.encrypt(generator.generatePin()), account);
                     cardRepository.saveAndFlush(card);
                     return;
                 }
@@ -52,7 +52,7 @@ public class CardService {
         if (!passwordEncoder.matches(password, customer.getPasswordCredential().getHashedPassword())) {
             throw new org.springframework.security.authentication.BadCredentialsException("Incorrect application password");
         }
-        Card card = cardRepository.findByCustomerEmail(email).orElseThrow(CardNotFoundException::new);
+        Card card = cardRepository.findFirstByAccountCustomerEmailOrderByAccountIdAsc(email).orElseThrow(CardNotFoundException::new);
         return new io.github.ayanledeeq1.digitalbanking.dto.cardDto.CardPinResponseDto(pinCipher.decrypt(card.getEncryptedPin()));
     }
 
@@ -60,7 +60,7 @@ public class CardService {
     public CardResponseDto getCurrentCard(String email) {
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        Card card = cardRepository.findByCustomerEmail(customer.getEmail()).orElseThrow(CardNotFoundException::new);
+        Card card = cardRepository.findFirstByAccountCustomerEmailOrderByAccountIdAsc(customer.getEmail()).orElseThrow(CardNotFoundException::new);
         return new CardResponseDto(card.getCardNumber(),
                 customer.getFirstName() + " " + customer.getLastNAme(), card.getExpiryDate(), card.getCvc2());
     }

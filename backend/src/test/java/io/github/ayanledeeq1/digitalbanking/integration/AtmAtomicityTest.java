@@ -62,7 +62,7 @@ class AtmAtomicityTest {
     void failureAfterRealLedgerInsertRollsBackTransactionAndEntry(String operation) throws Exception {
         String email = UUID.randomUUID() + "@example.com";
         customerId = customerService.saveCustomer(new RegisterCustomerDto("ATM", "Atomic", email, "ValidPass1!")).getId();
-        Card card = new TransactionTemplate(manager).execute(status -> cards.findByCustomerEmail(email).orElseThrow());
+        Card card = new TransactionTemplate(manager).execute(status -> cards.findFirstByAccountCustomerEmailOrderByAccountIdAsc(email).orElseThrow());
         cardId = card.getId(); accountId = card.getAccount().getId();
         atm.deposit(email, cardId, accountId, new BigDecimal("100"));
         long beforeTransactions = transactions.count(); long beforeLedger = ledger.count();

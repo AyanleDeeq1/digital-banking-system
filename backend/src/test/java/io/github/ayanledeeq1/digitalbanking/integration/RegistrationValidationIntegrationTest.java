@@ -45,7 +45,7 @@ class RegistrationValidationIntegrationTest {
 
     @AfterEach void cleanup() {
         var credentials = jdbc.queryForList("select password_credential_id from customer where email = ?", Long.class, EMAIL);
-        jdbc.update("delete from card where customer_id in (select id from customer where email = ?)", EMAIL);
+        jdbc.update("delete from card where account_id in (select a.id from account a join customer c on c.id = a.customer_id where c.email = ?)", EMAIL);
         jdbc.update("delete from account where customer_id in (select id from customer where email = ?)", EMAIL);
         jdbc.update("delete from customer where email = ?", EMAIL);
         credentials.forEach(id -> jdbc.update("delete from password_credential where id = ?", id));
