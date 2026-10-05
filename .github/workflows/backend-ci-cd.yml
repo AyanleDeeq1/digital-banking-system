@@ -75,6 +75,18 @@ jobs:
                 context: ./frontend
                 push: true
                 tags: ${{ vars.DOCKERHUB_USERNAME }}/digital-banking-frontend:latest
-
-               
-
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to VPS
+              uses: appleboy/ssh-action@v1
+              with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                port: ${{ secrets.PORT }}
+                script: |
+                    cd /root/digital-banking-system
+                    docker compose pull
+                    docker compose up -d
