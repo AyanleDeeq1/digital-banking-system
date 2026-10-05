@@ -48,7 +48,7 @@ function Register({ csrfToken, customer, logout}) {
         setTouched({ firstName: true, lastName: true, email: true, password: true, confirmPassword: true });
         if (!formValid || submitting) return;
         if (!csrfToken) {
-            setError('Unable to start registration. Please refresh the page and try again.');
+            setError('Your security session is still initializing. Please wait before submitting.');
             return;
         }
         setSubmitting(true);
@@ -212,7 +212,7 @@ function Register({ csrfToken, customer, logout}) {
                             </p>}
                         </div>
                         {error && <p className="validation-feedback invalid" role="alert">{error}</p>}
-                        <Button type="submit" disabled={!formValid || submitting}>
+                        <Button type="submit" disabled={!csrfToken || !formValid || submitting}>
                                 {submitting ? 'Creating account...' : 'Create account'}
                         </Button>
 

@@ -14,42 +14,41 @@ import Profile from "./pages/Profile.jsx";
 function App() {
 
   const [csrfToken, setCsrfToken] = useState(null);
+  const csrfRequest = useRef(null);
+  const [csrfError, setCsrfError] = useState('');
   const [customer, setCustomer] = useState(null)
   const [customerStatus, setCustomerStatus] = useState("loading");
   useEffect(() => {
-    async function getCsrfToken() {
-      const request = await fetch("/api/customers/csrf", {
-        method: "GET",
-        credentials: "include"
-      });
-      const data = await request.json();
-      console.log(data);
-      setCsrfToken(data.token)
-      
-    }
-
-    async function getCurrentCustomer() {
+    let cancelled = false;
+    async function initialize() {
       try {
+      const csrf = await fetchCsrf();
+      if (cancelled) return;
       const request = await fetch("/api/customers/me", {
         method: "GET",
         credentials: "include"
       });
+      if (cancelled) return;
 
       if (request.ok) {
         const res = await request.json()
+        if (cancelled) return;
         setCustomer(res)
         setCustomerStatus("ready");
       } else {
         setCustomer(null)
         setCustomerStatus(request.status === 401 || request.status === 403 ? "unauthenticated" : "error");
       }
+      setCsrfToken(csrf.token);
       } catch {
+        if (cancelled) return;
         setCustomerStatus("error");
+        setCsrfError('Unable to initialize your security session. Check your connection and try again.');
       }
     }
 
-    getCsrfToken();
-    getCurrentCustomer();
+    initialize();
+    return () => { cancelled = true; };
   }, [])
   
   const navigate = useNavigate();
@@ -57,12 +56,25 @@ function App() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [logoutError, setLogoutError] = useState('');
 
-  async function fetchCsrf() {
-    const response = await fetch('/api/customers/csrf', { credentials: 'include' });
-    if (!response.ok) throw new Error('Unable to verify your security session. Please reload and try again.');
-    const token = await response.json();
-    if (!token.token || !token.headerName) throw new Error('Unable to verify your security session. Please reload and try again.');
-    return token;
+  function fetchCsrf() {
+    // Share an in-flight load, including React StrictMode's initial effect replay.
+    if (!csrfRequest.current) {
+      csrfRequest.current = (async () => {
+        const response = await fetch('/api/customers/csrf', { credentials: 'include', cache: 'no-store' });
+        if (!response.ok) throw new Error('Unable to verify your security session. Please try again.');
+        const token = await response.json();
+        if (typeof token.token !== 'string' || !token.token || token.headerName !== 'X-XSRF-TOKEN') {
+          throw new Error('Unable to verify your security session. Please try again.');
+        }
+        return token;
+      })().finally(() => { csrfRequest.current = null; });
+    }
+    return csrfRequest.current;
+  }
+
+  function handleLogin(customer) {
+    setCustomer(customer);
+    setCustomerStatus('ready');
   }
 
   async function handleLogout() {
@@ -94,9 +106,11 @@ function App() {
   const logout = { pending: logoutPending, error: logoutError, submit: handleLogout };
 
   return (
+    <>
+    {csrfError && <p role="alert">{csrfError}</p>}
     <Routes>
       <Route path='/' element={<Home logout={logout}  customer={customer}/>} />
-      <Route path='/login' element={<Login logout={logout} csrfToken={csrfToken} customer={customer} setCustomer={setCustomer}/>} />
+      <Route path='/login' element={<Login logout={logout} csrfToken={csrfToken} customer={customer} setCustomer={handleLogin}/>} />
       <Route path='/register' element={<Register logout={logout} csrfToken={csrfToken} customer={customer} />} />
       <Route path='/dashboard' element={<Dashboard logout={logout} customer={customer} csrfToken={csrfToken}/>} />
       <Route path='/createAccount' element={<CreateAccount logout={logout} csrfToken={csrfToken} customer={customer} />} />
@@ -106,6 +120,7 @@ function App() {
       <Route path='/deposit-withdraw' element={<DepositWithdraw logout={logout} customer={customer} customerStatus={customerStatus} />} />
       <Route path='/profile' element={<Profile logout={logout} customer={customer} customerStatus={customerStatus} />} />
     </Routes>
+    </>
   )
 }
 

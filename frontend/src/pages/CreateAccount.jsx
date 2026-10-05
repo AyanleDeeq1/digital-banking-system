@@ -15,6 +15,7 @@ function CreateAccount({csrfToken, customer, logout}) {
 
     async function  createNewAccount(event) {
             event.preventDefault();
+        if (!csrfToken) return;
         const request = await fetch("/api/customers/createAccount", {
             method: "POST",
             credentials: "include",
@@ -129,6 +130,7 @@ function CreateAccount({csrfToken, customer, logout}) {
                             <Button
                                 variant="action"
                                 type="submit"
+                                disabled={!csrfToken}
                             >
                                 Create Account
                             </Button>

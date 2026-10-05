@@ -13,6 +13,7 @@ function Login({csrfToken, customer, setCustomer, logout}) {
 
     async function handleLogin(event) {
         event.preventDefault()
+        if (!csrfToken) return;
 
         const creds = {
             email,
@@ -80,7 +81,7 @@ function Login({csrfToken, customer, setCustomer, logout}) {
                                 />
                             </div>
 
-                                <Button type="submit">
+                                <Button type="submit" disabled={!csrfToken}>
                                         Log in
                                 </Button>
 
