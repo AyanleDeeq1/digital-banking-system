@@ -43,8 +43,22 @@ function DepositWithdraw({ customer, customerStatus , logout}) {
     const busyRef = useRef(false);
     const cardRef = useRef(null);
     const slotRef = useRef(null);
+    const screenRef = useRef(null);
     const active = accounts.filter(account => account.status === 'ACTIVE');
     const selected = active.find(account => String(account.id) === accountId);
+
+    useEffect(() => {
+        if (step !== 'INSERTING') return;
+        // Also finish when resizing or reduced motion cancels the CSS transition.
+        const timer = setTimeout(() => setStep(current => current === 'INSERTING' ? 'PIN' : current), 1200);
+        return () => clearTimeout(timer);
+    }, [step]);
+
+    useEffect(() => {
+        if (step === 'INSERT_CARD' || step === 'INSERTING') return;
+        screenRef.current?.scrollTo(0, 0);
+        screenRef.current?.querySelector('input, select, button')?.focus({ preventScroll: true });
+    }, [step]);
 
     useEffect(() => {
         if (!customer) return;
@@ -85,6 +99,7 @@ function DepositWithdraw({ customer, customerStatus , logout}) {
     }
 
     function insert() {
+        if (step !== 'INSERT_CARD') return;
         run(async () => {
             await post('eject'); // Start each insertion without a previous server-side verification.
             const cardBounds = cardRef.current.getBoundingClientRect();
@@ -165,7 +180,7 @@ function DepositWithdraw({ customer, customerStatus , logout}) {
                 <p className="atm-eyebrow">YOUR URBANK ATM</p><h1>Deposit / Withdraw</h1>
                 <p className="atm-intro">Insert your debit card to move money into or out of your accounts.</p>
                 <div className="atm-stage">
-                    <section className="atm-card-panel" aria-label="Your URBank debit card">
+                    <section className={`atm-card-panel ${inserted && step !== 'INSERTING' ? 'atm-card-panel-inserted' : ''}`} aria-label="Your URBank debit card">
                         <h2>Your debit card</h2>
                         {card ? <div ref={cardRef} className={`atm-card ${inserted ? 'atm-card-inserted' : ''}`}
                             onTransitionEnd={event => {
@@ -179,9 +194,16 @@ function DepositWithdraw({ customer, customerStatus , logout}) {
                         <p className="atm-simulation">Simulated ATM · SEK only</p>
                     </section>
                     <div className="atm-machine-window"><div className="atm-machine">
+                        <div className="atm-machine-visual">
                         <img className="atm-image" src={machine} alt="URBank ATM machine" />
                         <div ref={slotRef} className="atm-card-slot" aria-hidden="true" />
-                        <section className="atm-screen" aria-label="ATM screen" aria-busy={busy}>
+                        <div className="atm-display-summary" aria-hidden="true">
+                            <strong>URBANK ATM</strong>
+                            <span>{!customer ? 'Sign in to begin' : loading ? 'Preparing your ATM' : step === 'INSERT_CARD' ? 'Welcome' : step === 'INSERTING' ? 'Inserting card' : step === 'PIN' ? 'Enter your PIN' : step === 'MENU' ? 'Choose an operation' : step === 'RESULT' ? 'Operation complete' : step === 'DEPOSIT' ? 'Deposit' : 'Withdraw'}</span>
+                            <small>Use the controls below</small>
+                        </div>
+                        </div>
+                        <section ref={screenRef} className="atm-screen" aria-label="ATM screen" aria-busy={busy}>
                             <div className="atm-screen-brand">URBANK <span>ATM</span></div>
                             {!customer ? <p>{customerStatus === 'unauthenticated'
                                 ? <>Please <Link to="/login">sign in</Link> to use the ATM.</>
@@ -191,7 +213,7 @@ function DepositWithdraw({ customer, customerStatus , logout}) {
                                     <button type="button" disabled={!hasCard || busy} onClick={insert}>{busy ? 'Preparing…' : 'Insert Card'}</button></>}
                                 {step === 'INSERTING' && <p role="status">Inserting your card…</p>}
                                 {step === 'PIN' && <form onSubmit={verify}><h2>Enter your PIN</h2><label htmlFor="atm-pin">Four-digit card PIN</label>
-                                    <input autoFocus id="atm-pin" type="password" inputMode="numeric" autoComplete="off" maxLength={4} required
+                                    <input id="atm-pin" type="password" inputMode="numeric" autoComplete="off" maxLength={4} required
                                         pattern="[0-9]{4}" value={pin} disabled={busy} onChange={event => setPin(event.target.value)} />
                                     <button disabled={busy} type="submit">{busy ? 'Verifying…' : 'Verify PIN'}</button></form>}
                                 {step === 'MENU' && <><h2>Welcome</h2><p>What would you like to do?</p>

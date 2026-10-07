@@ -90,7 +90,7 @@ function Accounts({ customer , logout}) {
                         : <><section className="accounts-directory-heading"><div><h2>Your accounts <span>{accounts.length}</span></h2>
                             <p>Select an account to view its transaction history.</p></div></section>
                         <div className="accounts-table-container" tabIndex={0} role="region" aria-label="Your accounts table">
-                        <table className="accounts-table">
+                        <table className="accounts-table" role="table">
                             <thead>
                                 <tr>
                                     <th scope="col">Account Name</th>
@@ -103,30 +103,30 @@ function Accounts({ customer , logout}) {
 
                             <tbody>
                                 {accounts.map((account) => (
-                                    <tr key={account.id} className={selectedAccount?.id === account.id ? 'selected-account' : ''}>
-                                        <td className="account-name">
+                                    <tr role="row" key={account.id} className={selectedAccount?.id === account.id ? 'selected-account' : ''}>
+                                        <td role="cell" data-label="Account" className="account-name">
                                             <button type="button" className="account-select" aria-pressed={selectedAccount?.id === account.id}
                                                 onClick={() => setSearchParams({ account: String(account.id) })}>{account.name}<span>View history →</span></button>
                                         </td>
 
-                                        <td>
+                                        <td role="cell" data-label="Type">
                                             <span className="account-type">
                                                 {account.type}
                                             </span>
                                         </td>
 
-                                        <td className="account-number">
+                                        <td role="cell" data-label="Number" className="account-number">
                                             {account.accountNumber}
                                         </td>
 
-                                        <td>
+                                        <td role="cell" data-label="Status">
                                             <span
                                                 className={`table-status ${account.status.toLowerCase()}`}
                                             >
                                                 {account.status}
                                             </span>
                                         </td>
-                                        <td className="account-balance">
+                                        <td role="cell" data-label="Balance (SEK)" className="account-balance">
                                             {formatBalance(account.balance)}
                                         </td>
                                     </tr>

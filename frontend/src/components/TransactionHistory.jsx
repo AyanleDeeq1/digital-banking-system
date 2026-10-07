@@ -60,21 +60,21 @@ function TransactionHistory({ accountId, accountName, recent = false }) {
                 <img src={transfer} alt="" /><h3>No transactions yet</h3>
                 <p>Your transfers, deposits and withdrawals will appear here.</p></div>
             : <div className="history-scroll" tabIndex={0} role="region" aria-label="Transaction table">
-                <table className="history-table">
+                <table className="history-table" role="table">
                     <caption className="history-sr-only">{recent ? 'Latest five account movements' : `${accountName} history`}</caption>
                     <thead><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Account</th>
                         <th scope="col" className="history-amount">Amount</th><th scope="col">Status</th></tr></thead>
                     <tbody>{result.entries.map(entry => {
                         const type = types[entry.type];
                         const incoming = entry.amount > 0;
-                        return <tr key={entry.ledgerEntryId}>
-                            <td><time dateTime={entry.createdAt}>{dateFormatter.format(new Date(entry.createdAt))}</time></td>
-                            <td><span className="history-type">{type && <img src={type.icon} alt="" />}{type?.label || entry.type}</span></td>
-                            <td>{recent ? <Link to={`/accounts?account=${entry.accountId}`}>{entry.accountName}</Link> : entry.accountName}</td>
-                            <td className={`history-amount ${incoming ? 'incoming' : 'outgoing'}`}>
+                        return <tr role="row" key={entry.ledgerEntryId}>
+                            <td role="cell" data-label="Date"><time dateTime={entry.createdAt}>{dateFormatter.format(new Date(entry.createdAt))}</time></td>
+                            <td role="cell" data-label="Type"><span className="history-type">{type && <img src={type.icon} alt="" />}{type?.label || entry.type}</span></td>
+                            <td role="cell" data-label="Account">{recent ? <Link to={`/accounts?account=${entry.accountId}`}>{entry.accountName}</Link> : entry.accountName}</td>
+                            <td role="cell" data-label="Amount" className={`history-amount ${incoming ? 'incoming' : 'outgoing'}`}>
                                 <span className="history-sr-only">{incoming ? 'Incoming' : 'Outgoing'} </span>
                                 {incoming ? '+' : '−'}{formatBalance(Math.abs(entry.amount))}</td>
-                            <td><span className={`history-status ${entry.status.toLowerCase()}`}>{entry.status.charAt(0) + entry.status.slice(1).toLowerCase()}</span></td>
+                            <td role="cell" data-label="Status"><span className={`history-status ${entry.status.toLowerCase()}`}>{entry.status.charAt(0) + entry.status.slice(1).toLowerCase()}</span></td>
                         </tr>;
                     })}</tbody>
                 </table>

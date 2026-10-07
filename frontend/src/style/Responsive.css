@@ -1,0 +1,116 @@
+/* Shared responsive rules load after page styles so every route uses the same shell. */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-wrap: anywhere; }
+button, input, select { touch-action: manipulation; }
+button, input, select, a { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #1677e8; outline-offset: 3px; }
+main, .form-group, .card-details > div { min-width: 0; }
+.bank-card { max-width: 100%; }
+.card-details { gap: 12px; }
+.card-details > div:first-child { flex: 1; }
+.card-chip { flex-shrink: 0; }
+.account-card-header, .summary-header { gap: 12px; flex-wrap: wrap; }
+.account-card-balance strong { overflow-wrap: anywhere; }
+.atm-display-summary { display: none; }
+
+@media (max-width: 1100px) {
+    .home-page .home-main { flex-direction: column; align-items: center; gap: 36px; }
+    .home-intro, .home-card-visual { width: 100%; max-width: 550px; }
+    .home-card-visual .bank-card { margin-inline: auto; }
+    .quick-actions-grid { grid-template-columns: 1fr; }
+    .atm-stage { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 800px) {
+    #root, [class$="-page"] { min-height: 100svh; }
+    header { padding: 12px 16px; gap: 12px; flex-wrap: wrap; }
+    .header-logo img { width: 112px; }
+    .header-nav { gap: 8px; flex-wrap: wrap; min-width: 0; }
+    .header-nav a { padding: 12px; min-height: 44px; }
+    .header-nav .button-logout { width: auto; }
+    .header-nav [role="alert"] { flex-basis: 100%; }
+    :is(.dashboard-body, .accounts-body, .create-account-body, .my-card-body, .transfer-body, .atm-body, .profile-body) { flex-direction: column; }
+    [class$="-page"] .sidebar { width: 100%; padding: 12px 16px; border-right: 0; border-bottom: 1px solid #dfe7f1; }
+    [class$="-page"] .sidebar-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .sidebar-nav a { min-height: 44px; padding: 12px 8px; text-align: center; font-size: 14px; }
+    .sidebar-nav a:hover { transform: none; }
+    [class$="-page"] .sidebar-bottom { margin-top: 10px; padding-top: 10px; }
+    .sidebar-logout { min-height: 44px; text-align: center; }
+    :is(.dashboard-main, .accounts-main, .create-account-main, .my-card-main, .transfer-main, .atm-main, .profile-main) { width: 100%; padding: 24px 16px 32px; }
+    .footer { padding: 24px 16px; gap: 16px; flex-wrap: wrap; }
+    .home-page .home-main { padding: 32px 20px; }
+    .home-page .home-intro h1 { font-size: clamp(38px, 8vw, 60px); letter-spacing: -1px; }
+    .home-description { font-size: 18px; }
+    .login-main, .register-main { padding: 28px 16px; }
+    .login-card, .register-card { padding: 28px 22px; }
+    .login-heading h1, .register-heading h1 { font-size: 30px; }
+    .register-name-row { flex-direction: column; gap: 0; }
+    input, select, .form-group input, .form-group select { font-size: 16px; min-height: 44px; max-width: 100%; }
+    button, .button, .account-select { min-height: 44px; }
+    .accounts-heading, .accounts-page-heading { flex-wrap: wrap; gap: 16px; }
+    .accounts-grid { grid-template-columns: minmax(0, 1fr); }
+    .summary-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .summary-stat { padding: 12px 8px; }
+    .create-account-form, .transfer-panel { padding: 20px; }
+    .create-account-actions { flex-wrap: wrap; }
+    .create-account-actions .button { flex: 1; padding: 12px; }
+    .create-success-page { padding: 16px; }
+    .transfer-session { padding: 20px; }
+    .transfer-modes button { padding: 12px 8px; }
+    .my-card-stage { min-height: 0; padding: 20px 12px; }
+    :is(.home-card-visual, .my-card-stage, .atm-card) { container-type: inline-size; }
+    :is(.home-page, .my-card-stage, .atm-card) .bank-card { width: 100%; height: auto; min-height: 0; aspect-ratio: 420 / 250; padding: 5.7cqw; border-radius: 4.7cqw; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-header img { width: 26cqw; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-header { margin-bottom: 0; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-number { font-size: 5cqw; letter-spacing: .3cqw; white-space: nowrap; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-chip { width: 12cqw; height: 9cqw; margin-left: 8px; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-details { margin-top: 5cqw; gap: 8px; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-details span { font-size: 2.8cqw; letter-spacing: .2cqw; }
+    :is(.home-page, .my-card-stage, .atm-card) .card-details p { font-size: 3.8cqw; }
+}
+
+/* A console beneath the pictured ATM keeps controls readable and keyboard-accessible.
+   The upper machine and its real card-slot coordinates remain visible. */
+@media (max-width: 1200px), (max-height: 650px) {
+    .atm-stage { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+    .atm-card-panel { width: 100%; max-width: 350px; padding-top: 0; margin-inline: auto; }
+    .atm-machine-window { width: 100%; max-width: 440px; margin: 0 auto; }
+    .atm-machine-visual { position: relative; aspect-ratio: 1 / 1.12; overflow: hidden; border-radius: 20px 20px 0 0; }
+    .atm-machine-visual .atm-card-slot { top: 89.3%; height: 4.6%; }
+    .atm-display-summary { display: flex; position: absolute; left: 18.3%; top: 37.5%; width: 63.5%; height: 39.5%; padding: 16px; flex-direction: column; justify-content: center; gap: 12px; text-align: center; border-radius: 8px; background: linear-gradient(135deg, #0b2347, #143d61); color: white; }
+    .atm-display-summary strong { color: #b2d7ff; font-size: 12px; letter-spacing: 2px; }
+    .atm-display-summary span { font-size: 18px; font-weight: 600; }
+    .atm-display-summary small { color: #c9e3ff; font-size: 12px; }
+    .atm-card-panel-inserted .atm-card, .atm-card-panel-inserted h2 { display: none; }
+    .atm-screen { position: relative; inset: auto; width: 100%; height: auto; min-height: 260px; padding: 20px; border-radius: 0 0 20px 20px; font-size: 16px; overflow: visible; border: 1px solid #7699bc; }
+    .atm-screen label, .atm-available { font-size: 14px; }
+    .atm-screen input, .atm-screen select { min-height: 48px; font-size: 16px; padding: 12px; scroll-margin-block: 24px; }
+    .atm-screen button { width: 100%; min-height: 48px; margin: 12px 0 0; padding: 12px; }
+    .atm-menu { gap: 12px; }
+}
+
+@media (max-width: 600px) {
+    /* Retain table semantics and column headings while displaying labeled rows. */
+    :is(.accounts-table, .history-table) { display: block; min-width: 0; width: 100%; }
+    :is(.accounts-table, .history-table) thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    :is(.accounts-table, .history-table) tbody { display: block; }
+    :is(.accounts-table, .history-table) tr { display: block; padding: 12px; border-bottom: 1px solid #dfe7f1; }
+    :is(.accounts-table, .history-table) td { display: grid; grid-template-columns: 90px minmax(0, 1fr); align-items: center; gap: 12px; border: 0; padding: 8px 0; text-align: left; white-space: normal; }
+    :is(.accounts-table, .history-table) td::before { content: attr(data-label); font-size: 12px; font-weight: 600; color: #66768c; }
+    .accounts-table .selected-account td:first-child { box-shadow: none; }
+    .accounts-table .selected-account { box-shadow: inset 3px 0 #1677e8; }
+    .accounts-table .account-balance, .history-table .history-amount { text-align: left; white-space: normal; }
+    .history-table time { white-space: normal; }
+    .history-status, .account-type, .table-status { justify-self: start; }
+    .account-card, .account-summary { padding: 20px; }
+    .dashboard-account { display: flex; flex-direction: column; }
+    .dashboard-account .account-card { height: auto; flex: 1; }
+    .dashboard-account-link { position: static; max-width: none; width: 100%; padding: 12px; color: #0864c7; text-align: left; }
+    .dashboard-heading { padding: 20px; }
+    .accounts-heading { align-items: flex-start; flex-direction: column; }
+    .accounts-heading .button, .accounts-page-heading .button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
